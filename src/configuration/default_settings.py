@@ -1,7 +1,8 @@
 APP_NAME = 'Self learning backend'
 
 # postgresql+psycopg2://user:password@host/database
-SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:abc@localhost/SelfLearning'
+SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:abc@localhost'
+SQLALCHEMY_DATABASE_NAME = 'SelfLearning'
 
 BCRYPT_ROUNDS = 10
 

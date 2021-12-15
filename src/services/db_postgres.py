@@ -1,36 +1,42 @@
-from flask import Flask
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from os import path, walk
 from importlib import import_module
 from sys import modules
 
-from src.services.db_abstract import DBAbstract
+from flask import Flask
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 
-class DBPostgres(DBAbstract):
-    def drop_all(self):
-        cnn = self.engine.raw_connection()
-        cur = cnn.cursor()
-        cur.execute("""
-            select s.nspname as s, t.relname as t
-            from pg_class t join pg_namespace s on s.oid = t.relnamespace
-            where t.relkind = 'r'
-            and s.nspname !~ '^pg_' and s.nspname != 'information_schema'
-            order by 1,2
-            """)
-        tables = cur.fetchall()  # make sure they are the right ones
+class DBPostgres():
+    def __init__(self, app: Flask):
+        self.connection_string = f"{app.config['SQLALCHEMY_DATABASE_URI']}/{app.config['SQLALCHEMY_DATABASE_NAME']}"
+        self.engine = create_engine(self.connection_string)
+        self.Base = declarative_base()
+        self.metadata = self.Base.metadata
+        self.metadata.bind = self.engine
+        self.Session = sessionmaker(bind=self.engine, autoflush=True)
+        self.session = self.Session()
 
-        for t in tables:
-            cur.execute(f"drop table if exists {t[0]}.{t[1]} cascade")
+    # def drop_all(self):
+    #     cnn = self.engine.raw_connection()
+    #     cur = cnn.cursor()
+    #     cur.execute("""
+    #         select s.nspname as s, t.relname as t
+    #         from pg_class t join pg_namespace s on s.oid = t.relnamespace
+    #         where t.relkind = 'r'
+    #         and s.nspname !~ '^pg_' and s.nspname != 'information_schema'
+    #         order by 1,2
+    #         """)
+    #     tables = cur.fetchall()  # make sure they are the right ones
+    #
+    #     for t in tables:
+    #         cur.execute(f"drop table if exists {t[0]}.{t[1]} cascade")
+    #
+    #     cnn.commit()  # goodbye
 
-        cnn.commit()  # goodbye
-
-    def sql_create_db(self):
+    def create_db(self):
         schemas = []
         file_dir = path.realpath(path.join('src', 'models'))
-        print(file_dir)
         for (dirpath, dirnames, filenames) in filter(lambda x: not x[0].endswith('__pycache__') and x[0] != file_dir,
                                                      walk(file_dir)):
             schema = path.basename(dirpath)
@@ -39,7 +45,6 @@ class DBPostgres(DBAbstract):
             for filename in filenames:
                 filename_without_extension = path.splitext(filename)[0]
                 fullname = f'src.models.{schema}.{filename_without_extension}'
-                print(fullname)
                 if fullname not in modules:
                     import_module(fullname)
         for schema in schemas:

@@ -1,13 +1,14 @@
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from flask_sqlalchemy import SQLAlchemy
+
+from src.services.db_postgres import DBPostgres
 
 app = Flask(__name__)
 
 jwt = JWTManager(app)
 api = Api(app)
-db = DB_Postgres(app)
+db = DBPostgres(app)
 
 
 @jwt.expired_token_loader
