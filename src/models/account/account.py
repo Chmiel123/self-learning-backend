@@ -5,7 +5,6 @@ from sqlalchemy.dialects.postgresql import UUID, TEXT
 
 from src.services import services
 from src.services.postgres_serializer_mixing import PostgresSerializerMixin
-from src.services.services import db, flask
 
 
 class Account(services.db.Base, PostgresSerializerMixin):
@@ -14,22 +13,25 @@ class Account(services.db.Base, PostgresSerializerMixin):
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     name = Column(TEXT, nullable=False, unique=True, index=True)
-    email = Column(TEXT, nullable=False, unique=True, index=True)
+    email = Column(TEXT, nullable=True, unique=True, index=True)
     password = Column(TEXT, nullable=False)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, name: str, email: str, password: str):
+    def __init__(self, name: str, password: str):
         self.name = name
-        self.email = email
+        self.email = None
         self.password = Account.generate_hash(password)
 
     def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
+        services.db.session.add(self)
+        services.db.session.commit()
+
+    def is_email_verified(self):
+        return self.email is not None
 
     @staticmethod
     def generate_hash(password):
-        salt = bcrypt.gensalt(rounds=flask.config['BCRYPT_ROUNDS'])
+        salt = bcrypt.gensalt(rounds=services.flask.config['BCRYPT_ROUNDS'])
         hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
         return hashed.decode('utf-8')
 
@@ -39,16 +41,16 @@ class Account(services.db.Base, PostgresSerializerMixin):
 
     @staticmethod
     def find_by_id(id: int):
-        return db.session.query(Account).filter_by(id=id).first()
+        return services.db.session.query(Account).filter_by(id=id).first()
 
     @staticmethod
     def find_by_username(username):
-        return db.session.query(Account).filter_by(name=username).first()
+        return services.db.session.query(Account).filter_by(name=username).first()
 
     @staticmethod
     def find_by_email(email):
-        return db.session.query(Account).filter_by(email=email).first()
+        return services.db.session.query(Account).filter_by(email=email).first()
 
     @staticmethod
     def delete_by_id(id):
-        return db.session.query(Account).filter_by(id=id).delete()
+        return services.db.session.query(Account).filter_by(id=id).delete()

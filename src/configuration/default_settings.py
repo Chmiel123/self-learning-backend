@@ -10,3 +10,5 @@ SECRET_KEY = 'development-secret'
 JWT_SECRET_KEY = 'development-secret'
 JWT_BLACKLIST_ENABLED = True
 JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
+
+EMAIL_VERIFICATION_HOURS = 72
