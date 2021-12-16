@@ -18,16 +18,14 @@ parser = argparse.ArgumentParser(description='Process some integers.', formatter
 parser.add_argument('command', nargs='?',
                     help='''setup - Creates database from scratch, destroys first if exists.
 help - Prints this message.''')
-# parser.add_argument('--config', metavar='-c', type=str, dest='config',
-#                     default='',
-#                     help='Name of the config file (*name*_config.yml)')
 
 args = parser.parse_args()
 
 if __name__ == "__main__":
     if args.command == 'setup':
         try:
-            engine = create_engine(f"{services.flask.config['SQLALCHEMY_DATABASE_URI']}/{services.flask.config['SQLALCHEMY_DATABASE_NAME']}")
+            engine = create_engine(f"{services.flask.config['SQLALCHEMY_DATABASE_URI']}/" +
+                                   f"{services.flask.config['SQLALCHEMY_DATABASE_NAME']}")
             engine.execute('select t.relname from pg_class t')
         except OperationalError:
             engine = create_engine(services.flask.config['SQLALCHEMY_DATABASE_URI'])

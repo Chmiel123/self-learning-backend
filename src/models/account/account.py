@@ -40,15 +40,15 @@ class Account(services.db.Base, PostgresSerializerMixin):
         return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
 
     @staticmethod
-    def find_by_id(id: int):
+    def find_by_id(id: int) -> 'Account':
         return services.db.session.query(Account).filter_by(id=id).first()
 
     @staticmethod
-    def find_by_username(username):
+    def find_by_username(username) -> 'Account':
         return services.db.session.query(Account).filter_by(name=username).first()
 
     @staticmethod
-    def find_by_email(email):
+    def find_by_email(email) -> 'Account':
         return services.db.session.query(Account).filter_by(email=email).first()
 
     @staticmethod

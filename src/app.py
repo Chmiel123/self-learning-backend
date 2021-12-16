@@ -1,14 +1,12 @@
-from flask import Flask, jsonify
-from flask_jwt_extended import JWTManager
-from flask_restful import Api
+from flask import jsonify
 
-from src.services.db_postgres import DBPostgres
+from src.services import services
 
-app = Flask(__name__)
 
-jwt = JWTManager(app)
-api = Api(app)
-db = DBPostgres(app)
+flask = services.flask
+jwt = services.jwt
+api = services.api
+db = services.db
 
 
 @jwt.expired_token_loader
@@ -20,7 +18,7 @@ def my_expired_token_callback(expired_token):
     }), 401
 
 
-@app.route('/ping')
+@flask.route('/ping')
 def ping():
-    return jsonify(name=app.config['APP_NAME'], version='0.1')
+    return jsonify(name=flask.config['APP_NAME'], version='0.1')
 

@@ -12,4 +12,10 @@ class ErrorException(SelfLearningBackendException):
         self.error_code = error_code.value
         self.parameters = parameters
         super().__init__(default_message)
-    pass
+
+
+class WarningException(SelfLearningBackendException):
+    def __init__(self, warning_code: Enum, parameters: List[str], default_message='Warning.'):
+        self.warning_code = warning_code.value
+        self.parameters = parameters
+        super().__init__(default_message)

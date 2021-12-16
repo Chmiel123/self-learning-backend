@@ -17,5 +17,10 @@ services.jwt = JWTManager(services.flask)
 services.api = Api(services.flask)
 services.db = DBPostgres(services.flask)
 
+from src.services.email_service import FakeEmailService
+services.email = FakeEmailService(services.flask)
+
+from src import app
+
 if __name__ == "__main__":
     services.flask.run(ssl_context='adhoc')

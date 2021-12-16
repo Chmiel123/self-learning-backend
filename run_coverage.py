@@ -30,6 +30,9 @@ except OperationalError:
 services.db = DBPostgres(services.flask)
 services.db.create_db()
 
+from src.services.email_service import FakeEmailService
+services.email = FakeEmailService(services.flask)
+
 pattern = ''
 if len(sys.argv) > 1:
     pattern = sys.argv[1]
