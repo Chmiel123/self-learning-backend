@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from src.logic import account_logic
 from src.models.account.account import Account
 from src.models.account.email_verification import EmailVerification
+from src.models.account.password_reset import PasswordReset
 from src.test.base_test import BaseTest
 from src.util.exceptions import ErrorException, WarningException
 
@@ -39,7 +40,6 @@ class AccountLogicTest(BaseTest):
         self.assertRaises(ErrorException,
                           account_logic.create_account_with_password,
                           'bill', 'john@example.com', 'pass')
-
 
     def test_create_account_and_login(self):
         account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
@@ -103,13 +103,48 @@ class AccountLogicTest(BaseTest):
         self.assertEqual('john@example.com', found_account.email)
 
     def test_verify_email_verification_expired(self):
-        account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
+        account_logic.create_account_with_password('john', 'john@example.com', 'pass')
         found_account = Account.find_by_username('john')
         found_ev = EmailVerification.find_by_account_id(found_account.id)
         found_ev.created_date = datetime.utcnow() - timedelta(hours=9999)
         self.assertRaises(ErrorException,
                           account_logic.verify_email,
                           found_ev.verification_key)
+
+    def test_generate_password_reset(self):
+        account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
+        self.assertRaises(ErrorException,
+                          account_logic.generate_password_reset,
+                          'john2@example.com')
+        password_reset = account_logic.generate_password_reset('john@example.com')
+        self.assertEqual(password_reset.account_id, account.id)
+        account.email = 'john@example.com'
+        account.save_to_db()
+        password_reset = account_logic.generate_password_reset('john@example.com')
+        self.assertEqual(password_reset.account_id, account.id)
+
+    def test_verify_password_reset(self):
+        account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
+        first_password = account.password
+        password_reset = account_logic.generate_password_reset('john@example.com')
+        # bad verification key
+        self.assertRaises(ErrorException,
+                          account_logic.verify_password_reset,
+                          'aaaaaaaaaaa', 'pass2')
+        result = account_logic.verify_password_reset(password_reset.verification_key, 'pass2')
+        found_account = Account.find_by_username('john')
+        second_password = found_account.password
+        self.assertTrue(result)
+        self.assertNotEqual(first_password, second_password)
+
+    def test_verify_password_reset_verification_expired(self):
+        account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
+        account_logic.generate_password_reset('john@example.com')
+        found_pr = PasswordReset.find_by_account_id(account.id)
+        found_pr.created_date = datetime.utcnow() - timedelta(hours=9999)
+        self.assertRaises(ErrorException,
+                          account_logic.verify_password_reset,
+                          found_pr.verification_key, 'pass2')
 
 
 if __name__ == '__main__':

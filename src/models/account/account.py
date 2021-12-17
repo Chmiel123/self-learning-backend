@@ -26,6 +26,9 @@ class Account(services.db.Base, PostgresSerializerMixin):
         services.db.session.add(self)
         services.db.session.commit()
 
+    def set_password(self, password: str):
+        self.password = Account.generate_hash(password)
+
     def is_email_verified(self):
         return self.email is not None
 

@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 
-class DBPostgres():
+class DBPostgres:
     def __init__(self, app: Flask):
         self.connection_string = f"{app.config['SQLALCHEMY_DATABASE_URI']}/{app.config['SQLALCHEMY_DATABASE_NAME']}"
         self.engine = create_engine(self.connection_string)
@@ -16,23 +16,6 @@ class DBPostgres():
         self.metadata.bind = self.engine
         self.Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = self.Session()
-
-    # def drop_all(self):
-    #     cnn = self.engine.raw_connection()
-    #     cur = cnn.cursor()
-    #     cur.execute("""
-    #         select s.nspname as s, t.relname as t
-    #         from pg_class t join pg_namespace s on s.oid = t.relnamespace
-    #         where t.relkind = 'r'
-    #         and s.nspname !~ '^pg_' and s.nspname != 'information_schema'
-    #         order by 1,2
-    #         """)
-    #     tables = cur.fetchall()  # make sure they are the right ones
-    #
-    #     for t in tables:
-    #         cur.execute(f"drop table if exists {t[0]}.{t[1]} cascade")
-    #
-    #     cnn.commit()  # goodbye
 
     def create_db(self):
         schemas = []
