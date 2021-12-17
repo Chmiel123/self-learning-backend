@@ -21,6 +21,29 @@ register_parser.add_argument('email', help='This field cannot be blank', require
 
 class AccountRegistration(Resource):
     def post(self):
+        """Register a new account
+        ---
+        parameters:
+          - name: body
+            in: body
+            required: true
+            type: object
+            properties:
+                username:
+                  type: string
+                  example: john
+                password:
+                  type: string
+                  example: pass
+                email:
+                  type: string
+                  example: john@example.com
+        responses:
+          200:
+            description: Successfully created an account
+          500:
+            description: Server error occurred
+        """
         data = register_parser.parse_args()
         new_account = account_logic.create_account_with_password(
             data['username'], data['email'], data['password'])
