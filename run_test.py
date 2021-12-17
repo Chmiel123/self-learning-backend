@@ -38,32 +38,13 @@ except OperationalError:
     conn.execution_options(isolation_level="AUTOCOMMIT")\
         .execute(f'CREATE DATABASE "{services.flask.config["SQLALCHEMY_DATABASE_NAME"]}";')
 
-services.db = DBPostgres(services.flask)
-services.db.create_db()
-
-from src.services.email_service import FakeEmailService
-services.email = FakeEmailService(services.flask)
+from src import app
 
 pattern = ''
 if len(sys.argv) > 1:
     pattern = sys.argv[1]
 pattern = f'*{pattern}*_test.py'
 
-print(f'pattern: {pattern}')
-tests = unittest.TestLoader().discover('src/test/', pattern=pattern)
+print(f'pattern: {pattern}\n')
+tests = unittest.TestLoader().discover('src/test', pattern=pattern)
 result = unittest.TextTestRunner(verbosity=2).run(tests)
-
-# if __name__ == "__main__":
-#     if args.command == 'setup':
-#         try:
-#             engine = create_engine(
-#                 f"{services.flask.config['SQLALCHEMY_DATABASE_URI']}/{services.flask.config['SQLALCHEMY_DATABASE_NAME']}")
-#             engine.execute('select t.relname from pg_class t')
-#         except OperationalError:
-#             engine = create_engine(services.flask.config['SQLALCHEMY_DATABASE_URI'])
-#             conn = engine.connect()
-#             conn.execution_options(isolation_level="AUTOCOMMIT").execute(f'CREATE DATABASE "SelfLearning";')
-#     elif args.command == 'help':
-#         parser.print_help()
-#     else:
-#         parser.print_help()

@@ -5,8 +5,8 @@ from sqlalchemy import Column, ForeignKey, DateTime, INT
 from sqlalchemy.dialects.postgresql import TEXT
 
 from src.services import services
-from src.services.postgres_serializer_mixing import PostgresSerializerMixin
-from src.services.services import db, flask
+from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
+from src.services.services import db
 
 
 class EmailVerification(services.db.Base, PostgresSerializerMixin):

@@ -27,18 +27,14 @@ except OperationalError:
     conn.execution_options(isolation_level="AUTOCOMMIT")\
         .execute(f'CREATE DATABASE "{services.flask.config["SQLALCHEMY_DATABASE_NAME"]}";')
 
-services.db = DBPostgres(services.flask)
-services.db.create_db()
-
-from src.services.email_service import FakeEmailService
-services.email = FakeEmailService(services.flask)
+from src import app
 
 pattern = ''
 if len(sys.argv) > 1:
     pattern = sys.argv[1]
 pattern = f'*{pattern}*_test.py'
 
-print(f'pattern: {pattern}')
+print(f'pattern: {pattern}\n')
 
 COV = coverage.coverage(
     branch=True,

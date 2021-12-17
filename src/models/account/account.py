@@ -1,10 +1,10 @@
 import datetime
 import bcrypt
-from sqlalchemy import Column, ForeignKey, INT, DateTime
-from sqlalchemy.dialects.postgresql import UUID, TEXT
+from sqlalchemy import Column, INT, DateTime
+from sqlalchemy.dialects.postgresql import TEXT
 
 from src.services import services
-from src.services.postgres_serializer_mixing import PostgresSerializerMixin
+from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
 class Account(services.db.Base, PostgresSerializerMixin):

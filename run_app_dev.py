@@ -13,13 +13,6 @@ services.flask.config.from_object('src.configuration.default_settings')
 if environ.get('SELF_LEARNING_BACKEND_SETTINGS'):
     services.flask.config.from_envvar('SELF_LEARNING_BACKEND_SETTINGS')
 
-services.jwt = JWTManager(services.flask)
-services.api = Api(services.flask)
-services.db = DBPostgres(services.flask)
-
-from src.services.email_service import FakeEmailService
-services.email = FakeEmailService(services.flask)
-
 from src import app
 
 if __name__ == "__main__":

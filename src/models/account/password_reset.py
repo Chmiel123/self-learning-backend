@@ -5,7 +5,7 @@ from sqlalchemy import Column, ForeignKey, DateTime, INT
 from sqlalchemy.dialects.postgresql import TEXT
 
 from src.services import services
-from src.services.postgres_serializer_mixing import PostgresSerializerMixin
+from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
 class PasswordReset(services.db.Base, PostgresSerializerMixin):

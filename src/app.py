@@ -1,12 +1,23 @@
 from flask import jsonify
+from flask_jwt_extended import JWTManager
+from flask_restful import Api
+
+from src.services import services
+from src.services.db_postgres import DBPostgres
+from src.utils.exceptions import ErrorException, WarningException
+
+services.jwt = JWTManager(services.flask)
+services.api = Api(services.flask)
+services.db = DBPostgres(services.flask)
+
+from src.services.email_service import FakeEmailService
+services.email = FakeEmailService(services.flask)
 
 from src.models.account.logout_token import LogoutToken
 from src.resources.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails, \
     AccountRefresh, AccountCurrentDetails
 from src.resources.email_verification_resource import Email, EmailVerify
 from src.resources.password_reset_resource import PasswordResetGen, PasswordResetVerify
-from src.services import services
-from src.utils.exceptions import ErrorException, WarningException
 
 flask = services.flask
 jwt = services.jwt
@@ -62,7 +73,7 @@ def page_not_found(e):
 
 @flask.route('/ping')
 def ping():
-    return jsonify(name=flask.config['APP_NAME'], version='0.1')
+    return jsonify(name=flask.config['APP_NAME'], version=flask.config['APP_VERSION'])
 
 
 api.add_resource(AccountRegistration, '/account/register')

@@ -1,8 +1,8 @@
 from datetime import datetime
-from sqlalchemy import Column, ForeignKey, INT, DateTime, String
+from sqlalchemy import Column, INT, DateTime, String
 
 from src.services import services
-from src.services.postgres_serializer_mixing import PostgresSerializerMixin
+from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
 class LogoutToken(services.db.Base, PostgresSerializerMixin):

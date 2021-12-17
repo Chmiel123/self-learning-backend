@@ -1,4 +1,5 @@
 APP_NAME = 'Self learning backend'
+APP_VERSION = '0.1'
 
 # postgresql+psycopg2://user:password@host/database
 SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:abc@localhost'
