@@ -1,5 +1,5 @@
 
-def ok(payload):
+def ok(payload={}):
     return {
         'status': 'Ok',
         'payload': payload

@@ -6,6 +6,7 @@ class ErrorCode:
     USER_EMAIL_ALREADY_EXISTS = Enum('user_email_already_exists')
     USER_EMAIL_NOT_FOUND = Enum('user_email_not_found')
     USER_ID_NOT_FOUND = Enum('user_id_not_found')
+    USER_NOT_FOUND = Enum('user_not_found')
     WRONG_CREDENTIALS = Enum('wrong_credentials')
     DUPLICATE_EMAIL = Enum('duplicate_email')
     EMAIL_VERIFICATION_EXPIRED = Enum('email_verification_expired')

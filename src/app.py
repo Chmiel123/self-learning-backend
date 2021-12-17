@@ -1,7 +1,9 @@
 from flask import jsonify
 
 from src.models.account.logout_token import LogoutToken
-from src.resources.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails
+from src.resources.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails, \
+    AccountRefresh, AccountCurrentDetails
+from src.resources.email_verification_resource import Email, EmailVerify
 from src.services import services
 from src.utils.exceptions import ErrorException, WarningException
 
@@ -64,5 +66,9 @@ def ping():
 
 api.add_resource(AccountRegistration, '/account/register')
 api.add_resource(AccountLogin, '/account/login')
+api.add_resource(AccountRefresh, '/account/refresh')
 api.add_resource(AccountLogout, '/account/logout')
+api.add_resource(AccountCurrentDetails, '/account/current')
 api.add_resource(AccountDetails, '/account/details')
+api.add_resource(Email, '/account/email')
+api.add_resource(EmailVerify, '/account/email/verify')
