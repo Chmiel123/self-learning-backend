@@ -4,6 +4,7 @@ from src.models.account.logout_token import LogoutToken
 from src.resources.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails, \
     AccountRefresh, AccountCurrentDetails
 from src.resources.email_verification_resource import Email, EmailVerify
+from src.resources.password_reset_resource import PasswordResetGen, PasswordResetVerify
 from src.services import services
 from src.utils.exceptions import ErrorException, WarningException
 
@@ -72,3 +73,5 @@ api.add_resource(AccountCurrentDetails, '/account/current')
 api.add_resource(AccountDetails, '/account/details')
 api.add_resource(Email, '/account/email')
 api.add_resource(EmailVerify, '/account/email/verify')
+api.add_resource(PasswordResetGen, '/account/password-reset')
+api.add_resource(PasswordResetVerify, '/account/password-reset/verify')
