@@ -11,9 +11,9 @@
 #         data = password_reset_gen_parser.parse_args()
 #         try:
 #             account_logic.generate_password_reset(data['email'])
-#             return response.ok()
+#             return response.py.ok()
 #         except IMException as e:
-#             return response.error(e.args[0])
+#             return response.py.error(e.args[0])
 #
 #
 # class PasswordResetVerify(Resource):
@@ -21,6 +21,6 @@
 #         data = password_reset_verify_parser.parse_args()
 #         try:
 #             result = account_logic.verify_password_reset(data['verification_key'], data['password'])
-#             return response.ok(result)
+#             return response.py.ok(result)
 #         except IMException as e:
-#             return response.error(e.args[0])
+#             return response.py.error(e.args[0])

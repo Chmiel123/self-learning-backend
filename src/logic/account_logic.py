@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 
 from src.models.account.email_verification import EmailVerification
 from src.models.account.password_reset import PasswordReset
-from src.util.error_code import ErrorCode
-from src.util.exceptions import ErrorException, WarningException
+from src.utils.error_code import ErrorCode
+from src.utils.exceptions import ErrorException, WarningException
 from src.models.account.account import Account
-from src.util.warning_code import WarningCode
+from src.utils.warning_code import WarningCode
 from src.services import services
 
 

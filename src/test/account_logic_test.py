@@ -6,7 +6,7 @@ from src.models.account.account import Account
 from src.models.account.email_verification import EmailVerification
 from src.models.account.password_reset import PasswordReset
 from src.test.base_test import BaseTest
-from src.util.exceptions import ErrorException, WarningException
+from src.utils.exceptions import ErrorException, WarningException
 
 
 class AccountLogicTest(BaseTest):

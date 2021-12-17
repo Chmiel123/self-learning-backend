@@ -1,11 +1,15 @@
 from datetime import timedelta
 
+from flask import jsonify
 from flask_restful import Resource, reqparse, inputs
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, \
-    get_jwt_identity
-from src.logic import account_logic
+    get_jwt_identity, get_jwt
 
+from src.logic import account_logic
+from src.models.account.account import Account
+from src.models.account.logout_token import LogoutToken
 from src.services import services
+from src.utils.response import ok
 
 account_get_parser = reqparse.RequestParser()
 account_get_parser.add_argument('id', location='args', required=False)
@@ -37,16 +41,15 @@ class AccountRegistration(Resource):
 
         access_token = create_access_token(identity=data['username'],
                                            expires_delta=timedelta(
-                                               days=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_DAYS']))
+                                               hours=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_HOURS']))
         refresh_token = create_refresh_token(identity=data['username'],
                                              expires_delta=timedelta(
-                                                 days=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_DAYS']))
-        return {
-            'status': 'Ok',
+                                                 hours=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_HOURS']))
+        return ok({
             'message': f'User {data["username"]} was created',
             'access_token': access_token,
             'refresh_token': refresh_token
-        }
+        })
 
 
 class AccountLogin(Resource):
@@ -56,40 +59,25 @@ class AccountLogin(Resource):
 
         access_token = create_access_token(identity=current_account.name,
                                            expires_delta=timedelta(
-                                               days=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_DAYS']))
+                                               hours=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_HOURS']))
         refresh_token = create_refresh_token(identity=current_account.name,
                                              expires_delta=timedelta(
-                                                 days=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_DAYS']))
-        return {
-            'status': 'Ok',
+                                                 hours=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_HOURS']))
+        return ok({
             'message': f'Logged in as {current_account.name}',
             'access_token': access_token,
             'refresh_token': refresh_token
-        }
+        })
 
 
-# class AccountLogoutAccess(Resource):
-#     @jwt_required
-#     def post(self):
-#         jti = get_raw_jwt()['jti']
-#         try:
-#             revoked_token = RevokedTokenModel(jti = jti)
-#             revoked_token.add()
-#             return {'message': 'Access token has been revoked'}
-#         except:
-#             return {'message': 'Something went wrong'}, 500
+class AccountLogout(Resource):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()['jti']
+        revoked_token = LogoutToken(jti)
+        revoked_token.save_to_db()
+        return ok({'message': 'Access token has been revoked'})
 
-
-# class AccountLogoutRefresh(Resource):
-#     @jwt_refresh_token_required
-#     def post(self):
-#         jti = get_raw_jwt()['jti']
-#         try:
-#             revoked_token = RevokedTokenModel(jti = jti)
-#             revoked_token.add()
-#             return {'message': 'Refresh token has been revoked'}
-#         except:
-#             return {'message': 'Something went wrong'}, 500
 
 #
 # class TokenRefresh(Resource):
@@ -100,22 +88,17 @@ class AccountLogin(Resource):
 #         refresh_token = create_refresh_token(identity=current_user, expires_delta=datetime.timedelta(hours=1))
 #         return {'access_token': access_token, 'refresh_token': refresh_token}
 #
-#
-# class CurrentAccount(Resource):
-#     @jwt_required
-#     def get(self):
-#         account = Account.find_by_username(get_jwt_identity())
-#         return {
-#             'id': str(account.id),
-#             'name': account.name,
-#             'domain': account.domain,
-#             'created_date': str(account.created_date),
-#             'virtual_resource_start_date': str(account.virtual_resource_start_date),
-#             'virtual_resource_speed': account.virtual_resource_speed,
-#             'virtual_resource_accrued': account.virtual_resource_accrued,
-#             'total_resource_spent': account.total_resource_spent
-#         }
-#
+
+class AccountDetails(Resource):
+    @jwt_required()
+    def get(self):
+        account = Account.find_by_username(get_jwt_identity())
+        return ok({
+            'id': account.id,
+            'name': account.name,
+            'created_date': str(account.created_date)
+        })
+
 #
 # class Accounts(Resource):
 #     def get(self):
@@ -126,7 +109,7 @@ class AccountLogin(Resource):
 #         elif data['name']:
 #             account = account_logic.get_by_username(data['name'])
 #         else:
-#             return response.error("Invalid account id")
+#             return response.py.error("Invalid account id")
 #
 #         return {
 #             'id': str(account.id),
@@ -156,13 +139,13 @@ class AccountLogin(Resource):
 #                     if not account_email.verified:
 #                         email_logic.generate_verification(account_email)
 #                         # TODO: send actual email
-#                         return response.ok('Resent verification email')
-#                     return response.ok()
+#                         return response.py.ok('Resent verification email')
+#                     return response.py.ok()
 #
 #             # create
 #             max_emails = config['limit']['max_emails_per_account']
 #             if len(account.emails) >= max_emails:
-#                 return response.error(f'Maximum number of emails ({max_emails}) per account reached')
+#                 return response.py.error(f'Maximum number of emails ({max_emails}) per account reached')
 #
 #             new_account_email = AccountEmail(
 #                 account=account,
@@ -173,10 +156,10 @@ class AccountLogin(Resource):
 #                 email_logic.set_primary(new_account_email)
 #             email_logic.generate_verification(new_account_email)
 #             # TODO: send actual email
-#             return response.ok('Sent verification email')
+#             return response.py.ok('Sent verification email')
 #
 #         except IMException as e:
-#             return response.error(e.args[0])
+#             return response.py.error(e.args[0])
 #
 #     @jwt_required
 #     def delete(self):
@@ -185,8 +168,8 @@ class AccountLogin(Resource):
 #         for email in account.emails:
 #             if email.email == data['email']:
 #                 AccountEmail.delete_by_email(email.email)
-#                 return response.ok('Email deleted')
-#         return response.error('Email not found')
+#                 return response.py.ok('Email deleted')
+#         return response.py.error('Email not found')
 #
 #
 # class EmailVerify(Resource):
@@ -194,7 +177,7 @@ class AccountLogin(Resource):
 #         data = email_verification_parser.parse_args()
 #         try:
 #             email_logic.verify(data['verify'])
-#             return response.ok()
+#             return response.py.ok()
 #         except IMException as e:
-#             return response.error(e.args[0])
+#             return response.py.error(e.args[0])
 #

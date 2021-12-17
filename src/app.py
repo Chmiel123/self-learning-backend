@@ -1,8 +1,9 @@
 from flask import jsonify
 
-from src.resource.account_resource import AccountRegistration, AccountLogin
+from src.models.account.logout_token import LogoutToken
+from src.resources.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails
 from src.services import services
-from src.util.exceptions import ErrorException, WarningException
+from src.utils.exceptions import ErrorException, WarningException
 
 flask = services.flask
 jwt = services.jwt
@@ -11,12 +12,19 @@ db = services.db
 
 
 @jwt.expired_token_loader
-def my_expired_token_callback(expired_token):
+def expired_token_callback(expired_token):
     token_type = expired_token['type']
     return jsonify({
         'status': 'Error',
         'message': 'The {} token has expired'.format(token_type)
     }), 401
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload):
+    jti = jwt_payload["jti"]
+    token = LogoutToken.find_by_jti(jti)
+    return token is not None
 
 
 @flask.errorhandler(ErrorException)
@@ -56,3 +64,5 @@ def ping():
 
 api.add_resource(AccountRegistration, '/account/register')
 api.add_resource(AccountLogin, '/account/login')
+api.add_resource(AccountLogout, '/account/logout')
+api.add_resource(AccountDetails, '/account/details')

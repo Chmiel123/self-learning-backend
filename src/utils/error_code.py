@@ -1,4 +1,4 @@
-from src.util.enum import Enum
+from src.utils.enum import Enum
 
 
 class ErrorCode:
