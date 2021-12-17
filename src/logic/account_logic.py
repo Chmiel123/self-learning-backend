@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from src.models.account.email_verification import EmailVerification
 from src.util.error_code import ErrorCode
 from src.util.exceptions import ErrorException, WarningException
@@ -71,3 +73,18 @@ def generate_email_verification(account: Account, email: str) -> EmailVerificati
     email_verification.save_to_db()
     services.email.send_email_verification_email(email_verification)
     return email_verification
+
+
+def verify_email(verification_key: str) -> bool:
+    found_email_verification = EmailVerification.find_by_verification_key(verification_key)
+    if found_email_verification:
+        found_account = Account.find_by_id(found_email_verification.account_id)
+        max_hours = services.flask.config['EMAIL_VERIFICATION_HOURS']
+        if found_email_verification.created_date + timedelta(hours=max_hours) > datetime.utcnow():
+            found_account.email = found_email_verification.email
+            EmailVerification.delete_by_account_id(found_account.id)
+            return True
+        else:
+            raise ErrorException(ErrorCode.EMAIL_VERIFICATION_EXPIRED, [], 'Verification expired')
+    else:
+        raise ErrorException(ErrorCode.EMAIL_COULD_NOT_BE_VERIFIED, [], 'Email could not be verified')

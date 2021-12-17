@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime, timedelta
 
 from src.logic import account_logic
 from src.models.account.account import Account
@@ -88,6 +89,27 @@ class AccountLogicTest(BaseTest):
         self.assertRaises(ErrorException,
                           account_logic.generate_email_verification,
                           account, 'bill@example.com')
+
+    def test_verify_email(self):
+        account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
+        # bad verification key
+        self.assertRaises(ErrorException,
+                          account_logic.verify_email,
+                          'aaaaaaaaaaa')
+        found_email_verification = EmailVerification.find_by_account_id(account.id)
+        result = account_logic.verify_email(found_email_verification.verification_key)
+        self.assertTrue(result)
+        found_account = Account.find_by_username('john')
+        self.assertEqual('john@example.com', found_account.email)
+
+    def test_verify_email_verification_expired(self):
+        account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
+        found_account = Account.find_by_username('john')
+        found_ev = EmailVerification.find_by_account_id(found_account.id)
+        found_ev.created_date = datetime.utcnow() - timedelta(hours=9999)
+        self.assertRaises(ErrorException,
+                          account_logic.verify_email,
+                          found_ev.verification_key)
 
 
 if __name__ == '__main__':
