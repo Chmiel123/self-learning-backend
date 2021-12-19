@@ -1,7 +1,5 @@
-from functools import wraps
-
 from flasgger import Swagger
-from flask import jsonify, Response, request
+from flask import jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
@@ -12,16 +10,18 @@ from src.utils.exceptions import ErrorException, WarningException
 services.jwt = JWTManager(services.flask)
 services.api = Api(services.flask)
 services.db = DBPostgres(services.flask)
-swagger = Swagger(services.flask)
+
+if services.flask.config['SWAGGER_DOCUMENTATION']:
+    swagger = Swagger(services.flask)
 
 from src.services.email_service import FakeEmailService
 services.email = FakeEmailService(services.flask)
 
 from src.models.account.logout_token import LogoutToken
-from src.resources.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails, \
+from src.resources.account.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails, \
     AccountRefresh, AccountCurrentDetails
-from src.resources.email_verification_resource import Email, EmailVerify
-from src.resources.password_reset_resource import PasswordResetGen, PasswordResetVerify
+from src.resources.account.email_verification_resource import Email, EmailVerify
+from src.resources.account.password_reset_resource import PasswordResetGen, PasswordResetVerify
 
 flask = services.flask
 jwt = services.jwt
@@ -73,6 +73,16 @@ def page_not_found(e):
         'parameters': [],
         'default_message': 'Endpoint not found'
     }), 404
+
+
+@flask.errorhandler(Exception)
+def error_exception_handler(error: Exception):
+    return jsonify({
+        'status': 'Error',
+        'error_code': 'unknown_error',
+        'parameters': [],
+        'default_message': error
+    }), 500
 
 
 @flask.route('/ping')
