@@ -13,6 +13,23 @@ email_parser.add_argument('email', help='This field cannot be blank', required=T
 class Email(Resource):
     @jwt_required()
     def post(self):
+        """Set a new email address for an account, sends verification email.
+        ---
+        tags:
+          - Account
+        parameters:
+          - name: body
+            in: body
+            required: true
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: john@example.com
+        responses:
+          200:
+            description: OK.
+        """
         data = email_parser.parse_args()
         account = Account.find_by_username(get_jwt_identity())
         account_logic.generate_email_verification(account, data['email'])
@@ -25,6 +42,18 @@ email_verification_parser.add_argument('verify', help='This field cannot be blan
 
 class EmailVerify(Resource):
     def get(self):
+        """Verifies an email.
+        ---
+        tags:
+          - Account
+        parameters:
+          - name: verify
+            in: query
+            required: true
+        responses:
+          200:
+            description: OK.
+        """
         data = email_verification_parser.parse_args()
         result = account_logic.verify_email(data['verify'])
         if result:

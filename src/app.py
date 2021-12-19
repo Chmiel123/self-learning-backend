@@ -1,5 +1,7 @@
+from functools import wraps
+
 from flasgger import Swagger
-from flask import jsonify
+from flask import jsonify, Response, request
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
@@ -10,18 +12,6 @@ from src.utils.exceptions import ErrorException, WarningException
 services.jwt = JWTManager(services.flask)
 services.api = Api(services.flask)
 services.db = DBPostgres(services.flask)
-swagger_template = {
-    "components": {
-        "securitySchemes": {
-            "BearerAuth": {
-                "type": "https",
-                "scheme": "bearer",
-                "bearerFormat": "JWT",
-                "in": "header",
-            }
-        }
-    }
-}
 swagger = Swagger(services.flask)
 
 from src.services.email_service import FakeEmailService

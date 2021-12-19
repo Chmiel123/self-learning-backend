@@ -23,12 +23,14 @@ class AccountRegistration(Resource):
     def post(self):
         """Register a new account
         ---
+        tags:
+          - Account
         parameters:
           - name: body
             in: body
             required: true
-            type: object
-            properties:
+            schema:
+              properties:
                 username:
                   type: string
                   example: john
@@ -40,9 +42,7 @@ class AccountRegistration(Resource):
                   example: john@example.com
         responses:
           200:
-            description: Successfully created an account
-          500:
-            description: Server error occurred
+            description: OK.
         """
         data = register_parser.parse_args()
         new_account = account_logic.create_account_with_password(
@@ -68,6 +68,27 @@ login_parser.add_argument('password', help='This field cannot be blank', require
 
 class AccountLogin(Resource):
     def post(self):
+        """Login
+        ---
+        tags:
+          - Account
+        parameters:
+          - name: body
+            in: body
+            required: true
+            schema:
+              properties:
+                username:
+                  description: username or email
+                  type: string
+                  example: john
+                password:
+                  type: string
+                  example: pass
+        responses:
+          200:
+            description: OK.
+        """
         data = login_parser.parse_args()
         current_account = account_logic.login(data['username'], data['password'])
 
@@ -77,16 +98,27 @@ class AccountLogin(Resource):
         refresh_token = create_refresh_token(identity=current_account.name,
                                              expires_delta=timedelta(
                                                  hours=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_HOURS']))
-        return ok({
+        result = ok({
             'message': f'Logged in as {current_account.name}',
             'access_token': access_token,
             'refresh_token': refresh_token
         })
+        response = services.flask.make_response(result)
+        response.headers['jwt-token'] = access_token
+        return response
 
 
 class AccountLogout(Resource):
     @jwt_required()
     def post(self):
+        """Logout
+        ---
+        tags:
+          - Account
+        responses:
+          200:
+            description: OK.
+        """
         jti = get_jwt()['jti']
         revoked_token = LogoutToken(jti)
         revoked_token.save_to_db()
@@ -96,6 +128,14 @@ class AccountLogout(Resource):
 class AccountRefresh(Resource):
     @jwt_required()
     def get(self):
+        """Refresh login token
+        ---
+        tags:
+          - Account
+        responses:
+          200:
+            description: OK.
+        """
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user,
                                            expires_delta=timedelta(
@@ -103,16 +143,27 @@ class AccountRefresh(Resource):
         refresh_token = create_refresh_token(identity=current_user,
                                              expires_delta=timedelta(
                                                  hours=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_HOURS']))
-        return ok({
+        result = ok({
             'message': f'Refreshed token as {current_user}',
             'access_token': access_token,
             'refresh_token': refresh_token
         })
+        response = services.flask.make_response(result)
+        response.headers['jwt-token'] = access_token
+        return response
 
 
 class AccountCurrentDetails(Resource):
     @jwt_required()
     def get(self):
+        """Get details about the currently logged in account
+        ---
+        tags:
+          - Account
+        responses:
+          200:
+            description: OK.
+        """
         account = Account.find_by_username(get_jwt_identity())
         return ok({
             'id': account.id,
@@ -129,13 +180,28 @@ account_get_parser.add_argument('name', location='args', required=False)
 
 class AccountDetails(Resource):
     def get(self):
+        """Get details about an account
+        ---
+        tags:
+          - Account
+        parameters:
+          - name: id
+            type: int
+            in: query
+          - name: name
+            type: string
+            in: query
+        responses:
+          200:
+            description: OK.
+        """
         data = account_get_parser.parse_args()
         account = None
         if data['id'] and data['id'] != 'null':
             account = Account.find_by_id(data['id'])
         elif data['name']:
             account = Account.find_by_username(data['name'])
-        else:
+        if not account:
             raise ErrorException(ErrorCode.USER_NOT_FOUND, [data['id'], data['name']], 'User not found.')
 
         return ok({
