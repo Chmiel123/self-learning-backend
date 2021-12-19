@@ -18,6 +18,8 @@ class Comment(services.db.Base, PostgresSerializerMixin):
     parent_id = Column(INT, nullable=True, index=True)
     parent_type = Column(ENUM(EntityType), nullable=False, default=EntityType.lesson)
     content = Column(TEXT, nullable=False)
+    likes = Column(INT, default=0)
+    dislikes = Column(INT, default=0)
     created_date = Column(DateTime, default=datetime.utcnow)
 
     def __init__(self, author_id: int, parent_id: int, parent_type: EntityType, content: str):
