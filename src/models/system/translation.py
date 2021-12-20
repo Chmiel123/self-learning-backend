@@ -30,8 +30,17 @@ class Translation(services.db.Base, PostgresSerializerMixin):
         services.db.session.commit()
 
     @staticmethod
-    def find_by_id(id: int) -> 'Translation':
-        return services.db.session.query(Translation).filter_by(id=id).first()
+    def find_by_source_id_and_target_id(source_id: int, target_id: int, entity_type: EntityType) -> 'List[Translation]':
+        return services.db.session.query(Translation)\
+            .filter_by(source_id=source_id, target_id=target_id, entity_type=entity_type).all()
+
+    @staticmethod
+    def find_by_source_id(source_id: int, entity_type: EntityType) -> 'List[Translation]':
+        return services.db.session.query(Translation).filter_by(source_id=source_id, entity_type=entity_type).all()
+
+    @staticmethod
+    def find_by_target_id(target_id: int, entity_type: EntityType) -> 'List[Translation]':
+        return services.db.session.query(Translation).filter_by(target_id=target_id, entity_type=entity_type).all()
 
     @staticmethod
     def delete_by_id(id):

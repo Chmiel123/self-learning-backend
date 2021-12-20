@@ -30,15 +30,19 @@ class CategoryCategoryLink(services.db.Base, PostgresSerializerMixin):
         services.db.session.commit()
 
     @staticmethod
+    def find_all() -> 'List[CategoryCategoryLink]':
+        return services.db.session.query(CategoryCategoryLink).all()
+
+    @staticmethod
     def find_by_top_id_bottom_id(top_id: int, bottom_id: int):
         return services.db.session.query(CategoryCategoryLink).filter_by(top_id=top_id, bottom_id=bottom_id).first()
 
     @staticmethod
-    def find_by_top_id(top_id: int) -> 'CategoryCategoryLink':
+    def find_by_top_id(top_id: int) -> 'List[CategoryCategoryLink]':
         return services.db.session.query(CategoryCategoryLink).filter_by(top_id=top_id).all()
 
     @staticmethod
-    def find_by_bottom_id(bottom_id: int) -> 'CategoryCategoryLink':
+    def find_by_bottom_id(bottom_id: int) -> 'List[CategoryCategoryLink]':
         return services.db.session.query(CategoryCategoryLink).filter_by(bottom_id=bottom_id).all()
 
     @staticmethod

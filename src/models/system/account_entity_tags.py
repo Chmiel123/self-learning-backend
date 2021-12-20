@@ -60,12 +60,12 @@ class AccountEntityTags(services.db.Base, PostgresSerializerMixin):
             .filter_by(account_id=account_id, entity_id=entity_id, entity_type=entity_type).first()
 
     @staticmethod
-    def find_by_account_id(account_id, entity_type: EntityType) -> 'AccountEntityTags':
+    def find_by_account_id(account_id, entity_type: EntityType) -> 'List[AccountEntityTags]':
         return services.db.session.query(AccountEntityTags)\
             .filter_by(account_id=account_id, entity_type=entity_type).all()
 
     @staticmethod
-    def find_by_entity_id(entity_id, entity_type: EntityType) -> 'AccountEntityTags':
+    def find_by_entity_id(entity_id, entity_type: EntityType) -> 'List[AccountEntityTags]':
         return services.db.session.query(AccountEntityTags)\
             .filter_by(entity_id=entity_id, entity_type=entity_type).all()
 

@@ -37,15 +37,15 @@ class Comment(services.db.Base, PostgresSerializerMixin):
         return services.db.session.query(Comment).filter_by(id=id).first()
 
     @staticmethod
-    def find_by_author_id(author_id: int) -> 'Comment':
+    def find_by_author_id(author_id: int) -> 'List[Comment]':
         return services.db.session.query(Comment).filter_by(author_id=author_id).all()
 
     @staticmethod
-    def find_by_parent_id(parent_id: int, parent_type: EntityType) -> 'Comment':
+    def find_by_parent_id(parent_id: int, parent_type: EntityType) -> 'List[Comment]':
         return services.db.session.query(Comment).filter_by(parent_id=parent_id, parent_type=parent_type).all()
 
     @staticmethod
-    def search_in_content(search_string) -> 'Comment':
+    def search_in_content(search_string) -> 'List[Comment]':
         return services.db.session.query(Comment).filter(Comment.content.contains(search_string)).all()
 
     @staticmethod

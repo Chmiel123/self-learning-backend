@@ -43,15 +43,15 @@ class LessonGroup(services.db.Base, PostgresSerializerMixin):
         return services.db.session.query(LessonGroup).filter_by(id=id).first()
 
     @staticmethod
-    def find_by_author_id(author_id) -> 'LessonGroup':
+    def find_by_author_id(author_id) -> 'List[LessonGroup]':
         return services.db.session.query(LessonGroup).filter_by(author_id=author_id).all()
 
     @staticmethod
-    def find_by_category_id(category_id) -> 'LessonGroup':
+    def find_by_category_id(category_id) -> 'List[LessonGroup]':
         return services.db.session.query(LessonGroup).filter_by(category_id=category_id).all()
 
     @staticmethod
-    def search_in_content(search_string) -> 'LessonGroup':
+    def search_in_content(search_string) -> 'List[LessonGroup]':
         return services.db.session.query(LessonGroup).filter(LessonGroup.content.contains(search_string)).all()
 
     @staticmethod

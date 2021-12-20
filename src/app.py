@@ -22,6 +22,7 @@ from src.resources.account.account_resource import AccountRegistration, AccountL
     AccountRefresh, AccountCurrentDetails
 from src.resources.account.email_verification_resource import Email, EmailVerify
 from src.resources.account.password_reset_resource import PasswordResetGen, PasswordResetVerify
+from src.resources.system.category_resource import CategoryResource
 
 flask = services.flask
 jwt = services.jwt
@@ -81,7 +82,7 @@ def error_exception_handler(error: Exception):
         'status': 'Error',
         'error_code': 'unknown_error',
         'parameters': [],
-        'default_message': error
+        'default_message': str(error)
     }), 500
 
 
@@ -100,3 +101,4 @@ api.add_resource(Email, '/account/email')
 api.add_resource(EmailVerify, '/account/email/verify')
 api.add_resource(PasswordResetGen, '/account/password-reset')
 api.add_resource(PasswordResetVerify, '/account/password-reset/verify')
+api.add_resource(CategoryResource, '/category')

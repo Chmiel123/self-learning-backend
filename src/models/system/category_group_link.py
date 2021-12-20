@@ -31,11 +31,11 @@ class CategoryGroupLink(services.db.Base, PostgresSerializerMixin):
         return services.db.session.query(CategoryGroupLink).filter_by(top_id=top_id, bottom_id=bottom_id).first()
 
     @staticmethod
-    def find_by_top_id(top_id: int) -> 'CategoryGroupLink':
+    def find_by_top_id(top_id: int) -> 'List[CategoryGroupLink]':
         return services.db.session.query(CategoryGroupLink).filter_by(top_id=top_id).all()
 
     @staticmethod
-    def find_by_bottom_id(bottom_id: int) -> 'CategoryGroupLink':
+    def find_by_bottom_id(bottom_id: int) -> 'List[CategoryGroupLink]':
         return services.db.session.query(CategoryGroupLink).filter_by(bottom_id=bottom_id).all()
 
     @staticmethod
