@@ -23,7 +23,7 @@ class Lesson(services.db.Base, PostgresSerializerMixin):
                                 primary_key=True)
     created_date = Column(DateTime, default=datetime.utcnow)
 
-    target_language = relationship("Language")
+    target_language = relationship('Language')
 
     def __init__(self, author_id: int, name: str, content: str):
         self.author_id = author_id

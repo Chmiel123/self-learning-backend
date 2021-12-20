@@ -22,7 +22,7 @@ class Category(services.db.Base, PostgresSerializerMixin):
                                 primary_key=True)
     created_date = Column(DateTime, default=datetime.utcnow)
 
-    target_language = relationship("Language")
+    target_language = relationship('Language')
 
     def __init__(self, name: str, content: str):
         self.name = name

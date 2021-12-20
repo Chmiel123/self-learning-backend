@@ -10,7 +10,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 class DBPostgres:
     def __init__(self, app: Flask):
         self.connection_string = f"{app.config['SQLALCHEMY_DATABASE_URI']}/{app.config['SQLALCHEMY_DATABASE_NAME']}"
-        self.engine = create_engine(self.connection_string)
+        self.engine = create_engine(self.connection_string, client_encoding='utf8')
         self.Base = declarative_base()
         self.metadata = self.Base.metadata
         self.metadata.bind = self.engine

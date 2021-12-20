@@ -11,15 +11,12 @@ from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
-class CategoryCategoryLink(services.db.Base, PostgresSerializerMixin):
-    __tablename__ = 'category_category_link'
+class CategoryGroupLink(services.db.Base, PostgresSerializerMixin):
+    __tablename__ = 'category_group_link'
     __table_args__ = {'schema': 'system'}
 
     top_id = Column(INT, ForeignKey('system.category.id'), primary_key=True)
-    bottom_id = Column(INT, ForeignKey('system.category.id'), primary_key=True)
-
-    top = relationship('Category')
-    bottom = relationship('Category')
+    bottom_id = Column(INT, ForeignKey('system.lesson_group.id'), primary_key=True)
 
     def __init__(self, top_id: int, bottom_id: int):
         self.top_id = top_id
@@ -31,16 +28,16 @@ class CategoryCategoryLink(services.db.Base, PostgresSerializerMixin):
 
     @staticmethod
     def find_by_top_id_bottom_id(top_id: int, bottom_id: int):
-        return services.db.session.query(CategoryCategoryLink).filter_by(top_id=top_id, bottom_id=bottom_id).first()
+        return services.db.session.query(CategoryGroupLink).filter_by(top_id=top_id, bottom_id=bottom_id).first()
 
     @staticmethod
-    def find_by_top_id(top_id: int) -> 'CategoryCategoryLink':
-        return services.db.session.query(CategoryCategoryLink).filter_by(top_id=top_id).all()
+    def find_by_top_id(top_id: int) -> 'CategoryGroupLink':
+        return services.db.session.query(CategoryGroupLink).filter_by(top_id=top_id).all()
 
     @staticmethod
-    def find_by_bottom_id(bottom_id: int) -> 'CategoryCategoryLink':
-        return services.db.session.query(CategoryCategoryLink).filter_by(bottom_id=bottom_id).all()
+    def find_by_bottom_id(bottom_id: int) -> 'CategoryGroupLink':
+        return services.db.session.query(CategoryGroupLink).filter_by(bottom_id=bottom_id).all()
 
     @staticmethod
     def delete_by_top_id_bottom_id(top_id: int, bottom_id: int):
-        return services.db.session.query(CategoryCategoryLink).filter_by(top_id=top_id, bottom_id=bottom_id).delete()
+        return services.db.session.query(CategoryGroupLink).filter_by(top_id=top_id, bottom_id=bottom_id).delete()

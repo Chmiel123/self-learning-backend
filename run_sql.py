@@ -1,6 +1,6 @@
 import argparse as argparse
 from flask import Flask
-from os import environ
+from os import environ, path, walk
 
 from psycopg2._psycopg import OperationalError
 from sqlalchemy import create_engine
@@ -18,6 +18,8 @@ parser = argparse.ArgumentParser(description='Process some integers.', formatter
 parser.add_argument('command', nargs='?',
                     help='''setup - Creates database from scratch, destroys first if exists.
 help - Prints this message.''')
+parser.add_argument('-i', '--initial-data', dest='initial_data', action='store_true',
+                    help='Insert initial data into the database?')
 
 args = parser.parse_args()
 
@@ -33,7 +35,14 @@ if __name__ == "__main__":
             conn.execution_options(isolation_level="AUTOCOMMIT").execute(f'CREATE DATABASE "SelfLearning";')
         services.db = DBPostgres(services.flask)
         services.db.create_db()
+        if args.initial_data:
+            file_dir = path.realpath(path.join('database', 'initial_data'))
+            for dirpath, dirnames, filenames in walk(file_dir):
+                for filename in filenames:
+                    file = open(path.join(dirpath, filename))
+                    services.db.engine.execute(file.read())
     elif args.command == 'help':
         parser.print_help()
     else:
         parser.print_help()
+

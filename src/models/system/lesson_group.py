@@ -26,8 +26,8 @@ class LessonGroup(services.db.Base, PostgresSerializerMixin):
                                 primary_key=True)
     created_date = Column(DateTime, default=datetime.utcnow)
 
-    lessons = relationship("Lesson", backref="parent")
-    target_language = relationship("Language")
+    lessons = relationship('Lesson', backref='parent')
+    target_language = relationship('Language')
 
     def __init__(self, author_id: int, name: str, content: str):
         self.author_id = author_id

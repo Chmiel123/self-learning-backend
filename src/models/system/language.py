@@ -18,7 +18,7 @@ class Language(services.db.Base, PostgresSerializerMixin):
 
     id = Column(INT, primary_key=True, unique=False, nullable=False)
     # ISO 639-1 Code
-    code = Column(String(2), nullable=False)
+    code = Column(String(5), nullable=False)
     english_name = Column(TEXT)
     native_name = Column(TEXT)
 
