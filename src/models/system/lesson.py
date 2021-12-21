@@ -19,16 +19,14 @@ class Lesson(services.db.Base, PostgresSerializerMixin):
     content = Column(TEXT, nullable=False)
     likes = Column(INT, default=0)
     dislikes = Column(INT, default=0)
-    target_language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False,
-                                primary_key=True)
+    language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 
-    target_language = relationship('Language')
-
-    def __init__(self, author_id: int, name: str, content: str):
+    def __init__(self, author_id: int, name: str, content: str, language_id: int):
         self.author_id = author_id
         self.name = name
         self.content = content
+        self.language_id = language_id
 
     def save_to_db(self):
         services.db.session.add(self)

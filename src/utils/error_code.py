@@ -13,7 +13,7 @@ class ErrorCode:
     EMAIL_COULD_NOT_BE_VERIFIED = Enum('email_could_not_be_verified')
     PASSWORD_RESET_VERIFICATION_KEY_NOT_FOUND = Enum('password_reset_verification_key_not_found')
     PASSWORD_RESET_EXPIRED = Enum('password_reset_expired')
-
+    LANGUAGE_CODE_NOT_FOUND = Enum('language_code_not_found')
 
 
 

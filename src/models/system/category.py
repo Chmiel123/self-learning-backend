@@ -21,15 +21,13 @@ class Category(services.db.Base, PostgresSerializerMixin):
     name = Column(TEXT, nullable=False, unique=True, index=True)
     content = Column(TEXT, nullable=False)
     nr_lesson_groups = Column(INT, default=0)
-    language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False,
-                                primary_key=True)
+    language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 
-    language = relationship('Language')
-
-    def __init__(self, name: str, content: str):
+    def __init__(self, name: str, content: str, language_id: int):
         self.name = name
         self.content = content
+        self.language_id = language_id
 
     def save_to_db(self):
         services.db.session.add(self)
@@ -41,7 +39,6 @@ class Category(services.db.Base, PostgresSerializerMixin):
             'name': self.name,
             'content': self.content,
             'nr_lesson_groups': self.nr_lesson_groups,
-            'language': self.language.code,
             'created_date': str(self.created_date)
         }
 
@@ -52,6 +49,10 @@ class Category(services.db.Base, PostgresSerializerMixin):
     @staticmethod
     def find_by_id(id: int) -> 'Category':
         return services.db.session.query(Category).filter_by(id=id).first()
+
+    @staticmethod
+    def find_by_language_id(language_id: int) -> 'List[Category]':
+        return services.db.session.query(Category).filter_by(language_id=language_id).all()
 
     @staticmethod
     def search_in_content(search_string) -> 'List[Category]':

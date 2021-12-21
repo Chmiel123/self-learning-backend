@@ -39,8 +39,11 @@ if __name__ == "__main__":
             file_dir = path.realpath(path.join('database', 'initial_data'))
             for dirpath, dirnames, filenames in walk(file_dir):
                 for filename in filenames:
-                    file = open(path.join(dirpath, filename))
-                    services.db.engine.execute(file.read())
+                    if filename == 'order.txt':
+                        file = open(path.join(dirpath, filename))
+                        for line in file.readlines():
+                            file_sql = open(path.join(dirpath, line.strip()))
+                            services.db.engine.execute(file_sql.read())
     elif args.command == 'help':
         parser.print_help()
     else:
