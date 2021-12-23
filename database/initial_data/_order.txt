@@ -1,0 +1,2 @@
+system.language.sql
+content.category.sql

@@ -15,13 +15,13 @@ from src.models.system.language import Language
 
 class Category(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'category'
-    __table_args__ = {'schema': 'system'}
+    __table_args__ = {'schema': 'content'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     name = Column(TEXT, nullable=False, unique=True, index=True)
     content = Column(TEXT, nullable=False)
     nr_lesson_groups = Column(INT, default=0)
-    language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False)
+    language_id = Column(INT, ForeignKey('system.language.id'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 
     def __init__(self, name: str, content: str, language_id: int):

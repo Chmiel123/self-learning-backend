@@ -4,6 +4,7 @@ from os import environ, path, walk
 
 from psycopg2._psycopg import OperationalError
 from sqlalchemy import create_engine
+from sqlalchemy.sql import text
 
 from src.services import services
 from src.services.db_postgres import DBPostgres
@@ -36,14 +37,15 @@ if __name__ == "__main__":
         services.db = DBPostgres(services.flask)
         services.db.create_db()
         if args.initial_data:
-            file_dir = path.realpath(path.join('database', 'initial_data'))
-            for dirpath, dirnames, filenames in walk(file_dir):
-                for filename in filenames:
-                    if filename == 'order.txt':
-                        file = open(path.join(dirpath, filename))
-                        for line in file.readlines():
-                            file_sql = open(path.join(dirpath, line.strip()))
-                            services.db.engine.execute(file_sql.read())
+            # file_dir = path.realpath(path.join('database', 'initial_data'))
+            # for dirpath, dirnames, filenames in walk(file_dir):
+            #     for filename in filenames:
+            #         if filename == '_order.txt':
+            #             file = open(path.join(dirpath, filename))
+            #             for line in file.readlines():
+            #                 file_sql = open(path.join(dirpath, line.strip()))
+            #                 connection = services.db.engine.execute(file_sql.read())
+            import database.initial_data_py
     elif args.command == 'help':
         parser.print_help()
     else:

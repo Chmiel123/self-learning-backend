@@ -1,3 +1,5 @@
+import logging
+
 from flasgger import Swagger
 from flask import jsonify
 from flask_jwt_extended import JWTManager
@@ -75,17 +77,17 @@ def page_not_found(e):
         'default_message': 'Endpoint not found'
     }), 404
 
-#
-# @flask.errorhandler(Exception)
-# def error_exception_handler(error: Exception):
-#     if services.flask.config['DEBUG']:
-#         print(error)
-#     return jsonify({
-#         'status': 'Error',
-#         'error_code': 'unknown_error',
-#         'parameters': [],
-#         'default_message': str(error)
-#     }), 500
+
+@flask.errorhandler(Exception)
+def error_exception_handler(exception: Exception):
+    if services.flask.config['DEBUG']:
+        logging.exception(exception)
+    return jsonify({
+        'status': 'Error',
+        'error_code': 'unknown_error',
+        'parameters': [],
+        'default_message': str(exception)
+    }), 500
 
 
 @flask.route('/ping')

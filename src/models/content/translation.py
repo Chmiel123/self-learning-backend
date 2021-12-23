@@ -14,7 +14,7 @@ from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 class Translation(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'translation'
-    __table_args__ = {'schema': 'system'}
+    __table_args__ = {'schema': 'content'}
 
     source_id = Column(INT, primary_key=True, unique=False, nullable=False)
     target_id = Column(INT, primary_key=True, unique=False, nullable=False)

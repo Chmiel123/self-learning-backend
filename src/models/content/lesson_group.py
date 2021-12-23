@@ -12,7 +12,7 @@ from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 class LessonGroup(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'lesson_group'
-    __table_args__ = {'schema': 'system'}
+    __table_args__ = {'schema': 'content'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     author_id = Column(INT, nullable=False, index=True)

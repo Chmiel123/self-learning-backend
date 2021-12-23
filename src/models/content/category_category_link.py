@@ -13,10 +13,10 @@ from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 class CategoryCategoryLink(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'category_category_link'
-    __table_args__ = {'schema': 'system'}
+    __table_args__ = {'schema': 'content'}
 
-    top_id = Column(INT, ForeignKey('system.category.id'), primary_key=True)
-    bottom_id = Column(INT, ForeignKey('system.category.id'), primary_key=True)
+    top_id = Column(INT, ForeignKey('content.category.id'), primary_key=True)
+    bottom_id = Column(INT, ForeignKey('content.category.id'), primary_key=True)
     language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, top_id: int, bottom_id: int, language_id: int):

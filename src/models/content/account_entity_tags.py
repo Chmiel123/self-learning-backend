@@ -10,7 +10,7 @@ from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 class AccountEntityTags(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'account_entity_tags'
-    __table_args__ = {'schema': 'system'}
+    __table_args__ = {'schema': 'content'}
 
     account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), primary_key=True)
     entity_id = Column(INT, nullable=False, index=True, primary_key=True)
