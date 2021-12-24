@@ -1,8 +1,6 @@
 from src.models.content.category import Category
 from src.models.content.category_category_link import CategoryCategoryLink
 from src.models.system.language import Language
-from src.utils.error_code import ErrorCode
-from src.utils.exceptions import ErrorException
 
 
 def get_all_categories_for_language(language_code: str) -> object:

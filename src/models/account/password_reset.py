@@ -1,6 +1,7 @@
 import datetime
-import string
 import random
+import string
+
 from sqlalchemy import Column, ForeignKey, DateTime, INT
 from sqlalchemy.dialects.postgresql import TEXT
 

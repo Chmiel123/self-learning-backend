@@ -1,13 +1,6 @@
-from __future__ import annotations
+from sqlalchemy import Column, INT, String
+from sqlalchemy.dialects.postgresql import TEXT
 
-from datetime import datetime
-import enum
-
-from sqlalchemy import Column, INT, DateTime, ForeignKey, String
-from sqlalchemy.dialects.postgresql import TEXT, ENUM
-from sqlalchemy.orm import relationship
-
-from src.models.system.entity_type import EntityType
 from src.services import services
 from src.utils.error_code import ErrorCode
 from src.utils.exceptions import ErrorException

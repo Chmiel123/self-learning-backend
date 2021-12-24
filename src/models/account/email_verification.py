@@ -1,12 +1,13 @@
 import datetime
-import string
 import random
+import string
+
 from sqlalchemy import Column, ForeignKey, DateTime, INT
 from sqlalchemy.dialects.postgresql import TEXT
 
 from src.services import services
-from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 from src.services.services import db
+from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
 class EmailVerification(services.db.Base, PostgresSerializerMixin):

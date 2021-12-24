@@ -1,6 +1,7 @@
 import uuid
-from sqlalchemy_serializer import SerializerMixin
+
 from sqlalchemy.dialects.postgresql import TEXT
+from sqlalchemy_serializer import SerializerMixin
 
 
 class PostgresSerializerMixin(SerializerMixin):

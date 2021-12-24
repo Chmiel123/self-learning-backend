@@ -1,7 +1,5 @@
-from datetime import datetime
-
-from sqlalchemy import Column, INT, DateTime, ForeignKey, BOOLEAN, UniqueConstraint, PrimaryKeyConstraint
-from sqlalchemy.dialects.postgresql import TEXT, ENUM
+from sqlalchemy import Column, INT, ForeignKey, BOOLEAN
+from sqlalchemy.dialects.postgresql import ENUM
 
 from src.models.system.entity_type import EntityType
 from src.services import services

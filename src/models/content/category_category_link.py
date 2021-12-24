@@ -1,11 +1,4 @@
-from __future__ import annotations
-
-from datetime import datetime
-import enum
-
-from sqlalchemy import Column, INT, DateTime, ForeignKey, UniqueConstraint, PrimaryKeyConstraint
-from sqlalchemy.dialects.postgresql import TEXT, ENUM
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, INT, ForeignKey
 
 from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin

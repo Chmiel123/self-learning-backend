@@ -1,5 +1,4 @@
 from datetime import datetime
-import enum
 
 from sqlalchemy import Column, INT, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import TEXT, ENUM

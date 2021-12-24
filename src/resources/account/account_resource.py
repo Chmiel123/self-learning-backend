@@ -1,8 +1,8 @@
 from datetime import timedelta
 
-from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, \
     get_jwt_identity, get_jwt
+from flask_restful import Resource, reqparse
 
 from src.logic import account_logic
 from src.models.account.account import Account
@@ -11,7 +11,6 @@ from src.services import services
 from src.utils.error_code import ErrorCode
 from src.utils.exceptions import ErrorException
 from src.utils.response import ok
-
 
 register_parser = reqparse.RequestParser()
 register_parser.add_argument('username', help='This field cannot be blank', required=True)

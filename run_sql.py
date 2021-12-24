@@ -1,10 +1,9 @@
 import argparse as argparse
 from flask import Flask
-from os import environ, path, walk
+from os import environ
 
 from psycopg2._psycopg import OperationalError
 from sqlalchemy import create_engine
-from sqlalchemy.sql import text
 
 from src.services import services
 from src.services.db_postgres import DBPostgres

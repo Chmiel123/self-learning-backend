@@ -1,11 +1,8 @@
-# run_app_dev.py
-from flask import Flask
-from flask_jwt_extended import JWTManager
-from flask_restful import Api
 from os import environ
 
+from flask import Flask
+
 from src.services import services
-from src.services.db_postgres import DBPostgres
 
 services.flask = Flask(__name__)
 

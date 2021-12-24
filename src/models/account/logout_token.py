@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from sqlalchemy import Column, INT, DateTime, String
 
 from src.services import services

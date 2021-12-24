@@ -1,16 +1,11 @@
-from __future__ import annotations
-
 from datetime import datetime
-import enum
 from typing import List
 
 from sqlalchemy import Column, INT, DateTime, ForeignKey
-from sqlalchemy.dialects.postgresql import TEXT, ENUM
-from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import TEXT
 
 from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
-from src.models.system.language import Language
 
 
 class Category(services.db.Base, PostgresSerializerMixin):

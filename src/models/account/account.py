@@ -1,4 +1,5 @@
 import datetime
+
 import bcrypt
 from sqlalchemy import Column, INT, DateTime
 from sqlalchemy.dialects.postgresql import TEXT

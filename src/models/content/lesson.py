@@ -2,7 +2,6 @@ from datetime import datetime
 
 from sqlalchemy import Column, INT, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import TEXT
-from sqlalchemy.orm import relationship
 
 from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin

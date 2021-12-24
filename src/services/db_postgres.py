@@ -1,5 +1,5 @@
-from os import path, walk
 from importlib import import_module
+from os import path, walk
 from sys import modules
 
 from flask import Flask

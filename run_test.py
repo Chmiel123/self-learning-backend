@@ -9,7 +9,6 @@ from psycopg2._psycopg import OperationalError
 from sqlalchemy import create_engine
 
 from src.services import services
-from src.services.db_postgres import DBPostgres
 
 services.flask = Flask(__name__)
 

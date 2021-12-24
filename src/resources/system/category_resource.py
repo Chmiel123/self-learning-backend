@@ -3,7 +3,6 @@ from flask_restful import Resource, reqparse
 from src.logic import category_logic
 from src.utils.response import ok
 
-
 category_get_parser = reqparse.RequestParser()
 category_get_parser.add_argument('language', location='args', required=True)
 

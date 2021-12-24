@@ -1,10 +1,9 @@
-from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_restful import Resource, reqparse
 
 from src.logic import account_logic
 from src.models.account.account import Account
 from src.utils.response import ok
-
 
 email_parser = reqparse.RequestParser()
 email_parser.add_argument('email', help='This field cannot be blank', required=True)
