@@ -33,7 +33,7 @@ class CategoryLogicTest(BaseTest):
             'id': None,
             'name': 'a',
             'content': 'a is a category',
-            'language': 'en'
+            'language_id': 1
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
@@ -43,7 +43,7 @@ class CategoryLogicTest(BaseTest):
             'id': None,
             'name': 'a',
             'content': 'a is a category',
-            'language': 'en'
+            'language_id': 1
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
@@ -51,7 +51,23 @@ class CategoryLogicTest(BaseTest):
             'id': 1,
             'name': 'b',
             'content': 'b is a category',
-            'language': 'en'
+            'language_id': 1
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('b is a category', found_categories['categories'][0]['content'])
+
+    def test_update_id_not_found(self):
+        category_logic.create_or_update({
+            'id': None,
+            'name': 'a',
+            'content': 'a is a category',
+            'language_id': 1
+        })
+        found_categories = category_logic.get_all_categories_for_language('en')
+        self.assertEqual('a', found_categories['categories'][0]['name'])
+        self.assertRaises(ErrorException, category_logic.create_or_update, {
+            'id': 2,
+            'name': 'b',
+            'content': 'b is a category',
+            'language_id': 1
+        })

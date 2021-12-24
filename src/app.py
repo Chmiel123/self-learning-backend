@@ -1,5 +1,7 @@
 import logging
 
+import psycopg2.errors
+import sqlalchemy.exc
 from flasgger import Swagger
 from flask import jsonify
 from flask_jwt_extended import JWTManager
@@ -19,12 +21,13 @@ if services.flask.config['SWAGGER_DOCUMENTATION']:
 from src.services.email_service import FakeEmailService
 services.email = FakeEmailService(services.flask)
 
+from src.resources.system.system_resource import LanguageResource
 from src.models.account.logout_token import LogoutToken
 from src.resources.account.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails, \
     AccountRefresh, AccountCurrentDetails
 from src.resources.account.email_verification_resource import Email, EmailVerify
 from src.resources.account.password_reset_resource import PasswordResetGen, PasswordResetVerify
-from src.resources.system.category_resource import CategoryResource
+from src.resources.content.category_resource import CategoryResource
 
 flask = services.flask
 jwt = services.jwt
@@ -80,6 +83,9 @@ def page_not_found(e):
 
 @flask.errorhandler(Exception)
 def error_exception_handler(exception: Exception):
+    if issubclass(type(exception), psycopg2.errors.Error)\
+            or issubclass(type(exception), sqlalchemy.exc.SQLAlchemyError):
+        services.db.session.rollback()
     if services.flask.config['DEBUG']:
         logging.exception(exception)
     return jsonify({
@@ -95,6 +101,7 @@ def ping():
     return jsonify(name=flask.config['APP_NAME'], version=flask.config['APP_VERSION'])
 
 
+api.add_resource(LanguageResource, '/system/language')
 api.add_resource(AccountRegistration, '/account/register')
 api.add_resource(AccountLogin, '/account/login')
 api.add_resource(AccountRefresh, '/account/refresh')

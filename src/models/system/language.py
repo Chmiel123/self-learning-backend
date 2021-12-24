@@ -26,6 +26,18 @@ class Language(services.db.Base, PostgresSerializerMixin):
         services.db.session.add(self)
         services.db.session.commit()
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'code': self.code,
+            'english_name': self.english_name,
+            'native_name': self.native_name
+        }
+
+    @staticmethod
+    def find_all() -> 'List[Language]':
+        return services.db.session.query(Language).all()
+
     @staticmethod
     def find_by_code(code: code) -> 'Language':
         language = services.db.session.query(Language).filter_by(code=code).first()

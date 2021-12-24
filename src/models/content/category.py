@@ -2,8 +2,10 @@ from datetime import datetime
 from typing import List
 
 from sqlalchemy import Column, INT, DateTime, ForeignKey
-from sqlalchemy.dialects.postgresql import TEXT
+from sqlalchemy.dialects.postgresql import TEXT, ENUM
 
+from src.models.system.entity_status import EntityStatus
+from src.models.system.language import Language
 from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
@@ -15,6 +17,7 @@ class Category(services.db.Base, PostgresSerializerMixin):
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     name = Column(TEXT, nullable=False, unique=True, index=True)
     content = Column(TEXT, nullable=False)
+    status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
     nr_lesson_groups = Column(INT, default=0)
     language_id = Column(INT, ForeignKey('system.language.id'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
@@ -33,7 +36,9 @@ class Category(services.db.Base, PostgresSerializerMixin):
             'id': self.id,
             'name': self.name,
             'content': self.content,
+            'status': str(self.status),
             'nr_lesson_groups': self.nr_lesson_groups,
+            'language_id': self.language_id,
             'created_date': str(self.created_date)
         }
 

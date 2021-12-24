@@ -15,7 +15,7 @@ class CategoryResource(Resource):
         """Get all categories details
         ---
         tags:
-          - System
+          - Content
         parameters:
           - name: language
             type: string
@@ -35,7 +35,7 @@ class CategoryResource(Resource):
         """Create or Update a category
         ---
         tags:
-          - System
+          - Content
         parameters:
           - name: body
             in: body
@@ -54,14 +54,15 @@ class CategoryResource(Resource):
                       content:
                         type: string
                         example: New category description.
-                      language:
-                        type: string
-                        example: en
+                      language_id:
+                        type: int
+                        example: 57
         responses:
           200:
             description: OK.
         """
         data = category_post_parser.parse_args()
+        result = None
         if data['category']:
-            category_logic.create_or_update(data['category'])
-        return ok()
+            result = category_logic.create_or_update(data['category'])
+        return ok(result)
