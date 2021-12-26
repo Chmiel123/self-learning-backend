@@ -1,3 +1,4 @@
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, reqparse
 
 from src.logic import category_logic
@@ -31,6 +32,7 @@ class CategoryResource(Resource):
             result = category_logic.get_all_categories_for_language(data['language'])
         return ok(result)
 
+    @jwt_required()
     def post(self):
         """Create or Update a category
         ---
@@ -54,6 +56,10 @@ class CategoryResource(Resource):
                       content:
                         type: string
                         example: New category description.
+                      status:
+                        type: string
+                        enum: ['draft', 'active', 'deleted']
+                        example: draft
                       language_id:
                         type: int
                         example: 57

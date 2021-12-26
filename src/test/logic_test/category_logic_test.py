@@ -1,19 +1,20 @@
 from src.logic import category_logic
 from src.models.content.category import Category
-from src.models.system.language import Language
-from src.test.base_test import BaseTest
+from src.test.base_with_context_test import BaseWithContextTest
 from src.utils.exceptions import ErrorException
 
 
-class CategoryLogicTest(BaseTest):
-    def setUp(self):
-        super().setUp()
-        Language('en', 'english', 'english').save_to_db()
-
+class CategoryLogicTest(BaseWithContextTest):
     def test_get_all_categories_for_language(self):
-        category1 = Category('a', 'a is a category', 1)
+        category1 = Category()
+        category1.name = 'a'
+        category1.content = 'a is a category'
+        category1.language_id = 1
         category1.save_to_db()
-        category2 = Category('b', 'b is a category', 1)
+        category2 = Category()
+        category2.name = 'b'
+        category2.content = 'b is a category'
+        category2.language_id = 1
         category2.save_to_db()
 
         found_categories = category_logic.get_all_categories_for_language('en')
@@ -21,9 +22,15 @@ class CategoryLogicTest(BaseTest):
         self.assertEqual(category2.name, found_categories['categories'][1]['name'])
 
     def test_language_not_found(self):
-        category1 = Category('a', 'a is a category', 1)
+        category1 = Category()
+        category1.name = 'a'
+        category1.content = 'a is a category'
+        category1.language_id = 1
         category1.save_to_db()
-        category2 = Category('b', 'b is a category', 1)
+        category2 = Category()
+        category2.name = 'b'
+        category2.content = 'b is a category'
+        category2.language_id = 1
         category2.save_to_db()
 
         self.assertRaises(ErrorException, category_logic.get_all_categories_for_language, 'es')
@@ -43,7 +50,8 @@ class CategoryLogicTest(BaseTest):
             'id': None,
             'name': 'a',
             'content': 'a is a category',
-            'language_id': 1
+            'language_id': 1,
+            'status': 2
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
@@ -51,7 +59,8 @@ class CategoryLogicTest(BaseTest):
             'id': 1,
             'name': 'b',
             'content': 'b is a category',
-            'language_id': 1
+            'language_id': 1,
+            'status': 2
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('b is a category', found_categories['categories'][0]['content'])

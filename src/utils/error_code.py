@@ -15,7 +15,7 @@ class ErrorCode:
     PASSWORD_RESET_EXPIRED = Enum('password_reset_expired')
     LANGUAGE_CODE_NOT_FOUND = Enum('language_code_not_found')
     CATEGORY_ID_NOT_FOUND = Enum('category_not_not_found')
-
+    ADMIN_PRIVILEGE_REQUIRED = Enum('admin_privilege_required')
 
 
 

@@ -21,7 +21,7 @@ if services.flask.config['SWAGGER_DOCUMENTATION']:
 from src.services.email_service import FakeEmailService
 services.email = FakeEmailService(services.flask)
 
-from src.resources.system.system_resource import LanguageResource
+from src.resources.system.system_resource import LanguageResource, EnumResource
 from src.models.account.logout_token import LogoutToken
 from src.resources.account.account_resource import AccountRegistration, AccountLogin, AccountLogout, AccountDetails, \
     AccountRefresh, AccountCurrentDetails
@@ -102,6 +102,7 @@ def ping():
 
 
 api.add_resource(LanguageResource, '/system/language')
+api.add_resource(EnumResource, '/system/enum')
 api.add_resource(AccountRegistration, '/account/register')
 api.add_resource(AccountLogin, '/account/login')
 api.add_resource(AccountRefresh, '/account/refresh')

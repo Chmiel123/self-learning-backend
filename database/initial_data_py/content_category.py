@@ -11,6 +11,9 @@ categories = [
 ]
 lang = Language.find_by_code('en')
 for cat in categories:
-    category = Category(cat[0], cat[1], lang.id)
+    category = Category()
+    category.name = cat[0]
+    category.content = cat[1]
+    category.language_id = lang.id
     category.created_date = datetime(2012, 12, 12)
     category.save_to_db()

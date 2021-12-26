@@ -6,4 +6,5 @@ class EntityType(enum.Enum):
     lesson_group = 2
     lesson = 3
     comment = 4
+    change_history = 5
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column, INT, DateTime, ForeignKey
+from sqlalchemy import Column, INT, DateTime, ForeignKey, BOOLEAN
 from sqlalchemy.dialects.postgresql import TEXT, ENUM
 
 from src.models.system.entity_status import EntityStatus
@@ -15,32 +15,34 @@ class Category(services.db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'content'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
-    name = Column(TEXT, nullable=False, unique=True, index=True)
+    parent_id = Column(INT, ForeignKey('content.category.id'), nullable=True, index=True)
+    author_id = Column(INT, nullable=True, index=True)
+    name = Column(TEXT, nullable=False, index=True)
     content = Column(TEXT, nullable=False)
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
     nr_lesson_groups = Column(INT, default=0)
     language_id = Column(INT, ForeignKey('system.language.id'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
+    can_user_add_subcategory = Column(BOOLEAN, default=False)
 
-    def __init__(self, name: str, content: str, language_id: int):
-        self.name = name
-        self.content = content
-        self.language_id = language_id
+    def __init__(self):
+        pass
 
     def save_to_db(self):
         services.db.session.add(self)
         services.db.session.commit()
 
     def serialize(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'content': self.content,
-            'status': str(self.status),
-            'nr_lesson_groups': self.nr_lesson_groups,
-            'language_id': self.language_id,
-            'created_date': str(self.created_date)
-        }
+        return self.to_dict()
+        # return {
+        #     'id': self.id,
+        #     'name': self.name,
+        #     'content': self.content,
+        #     'status': str(self.status),
+        #     'nr_lesson_groups': self.nr_lesson_groups,
+        #     'language_id': self.language_id,
+        #     'created_date': str(self.created_date)
+        # }
 
     @staticmethod
     def find_all() -> 'List[Category]':
