@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta
 
+from flask_jwt_extended import get_jwt_identity
+
+from src.models.account.admin_privilege import AdminPrivilege
 from src.models.account.email_verification import EmailVerification
 from src.models.account.password_reset import PasswordReset
 from src.utils.error_code import ErrorCode
@@ -7,7 +10,7 @@ from src.utils.exceptions import ErrorException, WarningException, UserNameAlrea
     UserEmailAlreadyExistsException, UserEmailNotFoundException, UserIdNotFoundException, WrongCredentialsException, \
     DuplicateEmailException, EmailVerificationExpiredException, \
     EmailVerificationKeyNotFoundException, PasswordResetVerificationKeyNotFoundException, PasswordResetExpiredException, \
-    EmailIsTheSameException
+    EmailIsTheSameException, AdminPrivilegeRequiredException, UserNameNotFoundException
 from src.models.account.account import Account
 from src.utils.warning_code import WarningCode
 from src.services import services
@@ -125,3 +128,18 @@ def verify_password_reset(verification_key: str, new_password: str) -> bool:
     else:
         raise PasswordResetExpiredException()
 
+
+def check_if_admin_privilege(language_id: int):
+    current_account = get_current_account()
+    admin_privilege = AdminPrivilege.find_by_account_id_and_language_id(current_account.id, language_id)
+    if not admin_privilege:
+        raise AdminPrivilegeRequiredException()
+    return current_account
+
+
+def get_current_account():
+    current_user = get_jwt_identity()
+    current_account = Account.find_by_username(current_user)
+    if not current_account:
+        raise UserNameNotFoundException([current_user])
+    return current_account

@@ -29,14 +29,18 @@ class UserEmailAlreadyExistsException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'User with email {} already exists'
-class UserEmailNotFoundException(ErrorException):
-    def __init__(self, parameters: List[str] = []):
-        super().__init__(parameters)
-        self.default_message = 'User with email doesn\'t exist'
 class UserIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'User with id {} not found'
+class UserNameNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User with name {} not found'
+class UserEmailNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User with email doesn\'t exist'
 class UserIdOrNameNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)

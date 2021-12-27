@@ -4,6 +4,7 @@ from sqlalchemy import Column, INT, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import TEXT, ENUM
 from sqlalchemy.orm import relationship
 
+from src.models.content.category_group_link import CategoryGroupLink
 from src.models.system.entity_status import EntityStatus
 from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
@@ -15,7 +16,6 @@ class LessonGroup(services.db.Base, PostgresSerializerMixin):
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     author_id = Column(INT, nullable=False, index=True)
-    category_id = Column(INT, nullable=False)
     name = Column(TEXT, nullable=False, unique=True, index=True)
     content = Column(TEXT, nullable=False)
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
@@ -23,8 +23,6 @@ class LessonGroup(services.db.Base, PostgresSerializerMixin):
     dislikes = Column(INT, default=0)
     language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
-
-    lessons = relationship('Lesson', backref='parent')
 
     def __init__(self, author_id: int, name: str, content: str, language_id: int):
         self.author_id = author_id
@@ -45,8 +43,10 @@ class LessonGroup(services.db.Base, PostgresSerializerMixin):
         return services.db.session.query(LessonGroup).filter_by(author_id=author_id).all()
 
     @staticmethod
-    def find_by_category_id(category_id) -> 'List[LessonGroup]':
-        return services.db.session.query(LessonGroup).filter_by(category_id=category_id).all()
+    def find_by_category_id(category_id: int, page_number: int, page_size: int) -> 'List[LessonGroup]':
+        return services.db.session.query(LessonGroup)\
+            .join(CategoryGroupLink, LessonGroup.id == CategoryGroupLink.group_id)\
+            .filter_by(category_id=category_id).limit(page_size).offset((page_number - 1) * page_size).all()
 
     @staticmethod
     def search_in_content(search_string) -> 'List[LessonGroup]':

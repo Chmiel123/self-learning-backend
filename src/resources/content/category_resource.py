@@ -14,7 +14,6 @@ category_delete_parser = reqparse.RequestParser()
 category_delete_parser.add_argument('id', type=int, help='This field cannot be blank', required=True)
 
 
-
 class CategoryResource(Resource):
     def get(self):
         """Get all categories details
@@ -65,11 +64,14 @@ class CategoryResource(Resource):
                         example: New category description.
                       status:
                         type: string
-                        enum: ['draft', 'active', 'deleted']
-                        example: draft
+                        enum: [1, 2, 3]
+                        example: 1
                       language_id:
                         type: int
                         example: 57
+                      can_add_lesson_groups:
+                        type: bool
+                        example: true
         responses:
           200:
             description: OK.
@@ -94,7 +96,7 @@ class CategoryResource(Resource):
               properties:
                 id:
                   type: int
-                  example: 5
+                  example: 1
         responses:
           200:
             description: OK.

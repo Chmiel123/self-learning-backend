@@ -20,10 +20,10 @@ class Category(services.db.Base, PostgresSerializerMixin):
     name = Column(TEXT, nullable=False, index=True)
     content = Column(TEXT, nullable=False)
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
-    nr_lesson_groups = Column(INT, default=0)
+    can_add_lesson_groups = Column(BOOLEAN, default=False)
+    nr_active_lesson_groups = Column(INT, default=0)
     language_id = Column(INT, ForeignKey('system.language.id'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
-    can_user_add_subcategory = Column(BOOLEAN, default=False)
 
     def __init__(self):
         pass
@@ -31,18 +31,6 @@ class Category(services.db.Base, PostgresSerializerMixin):
     def save_to_db(self):
         services.db.session.add(self)
         services.db.session.commit()
-
-    def serialize(self):
-        return self.to_dict()
-        # return {
-        #     'id': self.id,
-        #     'name': self.name,
-        #     'content': self.content,
-        #     'status': str(self.status),
-        #     'nr_lesson_groups': self.nr_lesson_groups,
-        #     'language_id': self.language_id,
-        #     'created_date': str(self.created_date)
-        # }
 
     @staticmethod
     def find_all() -> 'List[Category]':

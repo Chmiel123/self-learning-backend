@@ -25,11 +25,11 @@ class CategoryGroupLink(services.db.Base, PostgresSerializerMixin):
             .filter_by(category_id=category_id, group_id=group_id).first()
 
     @staticmethod
-    def find_by_top_id(category_id: int) -> 'List[CategoryGroupLink]':
+    def find_by_category_id(category_id: int) -> 'List[CategoryGroupLink]':
         return services.db.session.query(CategoryGroupLink).filter_by(category_id=category_id).all()
 
     @staticmethod
-    def find_by_bottom_id(group_id: int) -> 'List[CategoryGroupLink]':
+    def find_by_group_id(group_id: int) -> 'List[CategoryGroupLink]':
         return services.db.session.query(CategoryGroupLink).filter_by(group_id=group_id).all()
 
     @staticmethod
