@@ -21,6 +21,18 @@ class WarningException(SelfLearningBackendException):
         super().__init__()
 
 
+class WrongCredentialsException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Wrong credentials'
+class NotAuthorizedException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Not authorized'
+class AdminPrivilegeRequiredException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Admin privilege required'
 class UserNameAlreadyExistsException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
@@ -45,10 +57,6 @@ class UserIdOrNameNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'User with id {} or name {} not found'
-class WrongCredentialsException(ErrorException):
-    def __init__(self, parameters: List[str] = []):
-        super().__init__(parameters)
-        self.default_message = 'Wrong credentials'
 class DuplicateEmailException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
@@ -77,10 +85,10 @@ class CategoryIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Category with id {} not found'
-class AdminPrivilegeRequiredException(ErrorException):
+class LessonGroupIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
-        self.default_message = 'Admin privilege required'
+        self.default_message = 'Lesson group with id {} not found'
 
 
 class EmailIsTheSameException(WarningException):

@@ -131,7 +131,7 @@ def verify_password_reset(verification_key: str, new_password: str) -> bool:
 
 def check_if_admin_privilege(language_id: int):
     current_account = get_current_account()
-    admin_privilege = AdminPrivilege.find_by_account_id_and_language_id(current_account.id, language_id)
+    admin_privilege = get_current_admin_privilege(current_account, language_id)
     if not admin_privilege:
         raise AdminPrivilegeRequiredException()
     return current_account
@@ -143,3 +143,7 @@ def get_current_account():
     if not current_account:
         raise UserNameNotFoundException([current_user])
     return current_account
+
+
+def get_current_admin_privilege(current_account: Account, language_id: int):
+    return AdminPrivilege.find_by_account_id_and_language_id(current_account.id, language_id)

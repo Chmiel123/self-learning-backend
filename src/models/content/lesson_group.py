@@ -4,6 +4,7 @@ from sqlalchemy import Column, INT, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import TEXT, ENUM
 from sqlalchemy.orm import relationship
 
+from src.models.content.category import Category
 from src.models.content.category_group_link import CategoryGroupLink
 from src.models.system.entity_status import EntityStatus
 from src.services import services
@@ -16,7 +17,7 @@ class LessonGroup(services.db.Base, PostgresSerializerMixin):
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     author_id = Column(INT, nullable=False, index=True)
-    name = Column(TEXT, nullable=False, unique=True, index=True)
+    name = Column(TEXT, nullable=False, index=True)
     content = Column(TEXT, nullable=False)
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
     likes = Column(INT, default=0)
@@ -24,15 +25,13 @@ class LessonGroup(services.db.Base, PostgresSerializerMixin):
     language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 
-    def __init__(self, author_id: int, name: str, content: str, language_id: int):
-        self.author_id = author_id
-        self.name = name
-        self.content = content
-        self.language_id = language_id
-
     def save_to_db(self):
         services.db.session.add(self)
         services.db.session.commit()
+
+    def get_parents(self):
+        return services.db.session.query(Category)\
+            .join(CategoryGroupLink, Category.id == CategoryGroupLink.category_id).filter_by(group_id=self.id).all()
 
     @staticmethod
     def find_by_id(id: int) -> 'LessonGroup':

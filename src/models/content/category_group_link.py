@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import Column, INT, ForeignKey
 
 from src.services import services
@@ -11,9 +13,9 @@ class CategoryGroupLink(services.db.Base, PostgresSerializerMixin):
     category_id = Column(INT, ForeignKey('content.category.id'), primary_key=True)
     group_id = Column(INT, ForeignKey('content.lesson_group.id'), primary_key=True)
 
-    def __init__(self, top_id: int, bottom_id: int):
-        self.category_id = top_id
-        self.group_id = bottom_id
+    def __init__(self, category_id: int, group_id: int):
+        self.category_id = category_id
+        self.group_id = group_id
 
     def save_to_db(self):
         services.db.session.add(self)
@@ -33,6 +35,6 @@ class CategoryGroupLink(services.db.Base, PostgresSerializerMixin):
         return services.db.session.query(CategoryGroupLink).filter_by(group_id=group_id).all()
 
     @staticmethod
-    def delete_by_top_id_bottom_id(category_id: int, group_id: int):
+    def delete_by_category_id_group_id(category_id: int, group_id: int):
         return services.db.session.query(CategoryGroupLink)\
             .filter_by(category_id=category_id, group_id=group_id).delete()

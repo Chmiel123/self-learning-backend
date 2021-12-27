@@ -24,11 +24,11 @@ def create_or_update(category_dict: dict) -> Category:
         category = Category.find_by_id(category_dict['id'])
         if category:
             category = _update(category, category_dict, current_account)
-            return category.serialize()
+            return category.to_dict()
         else:
             raise CategoryIdNotFoundException([category_dict['id']])
     category = _create(category_dict, current_account)
-    return category.serialize()
+    return category.to_dict()
 
 
 def delete(id: int):
@@ -42,7 +42,7 @@ def delete(id: int):
             change_history = ChangeHistory(current_account.id, category.id, EntityType.category, category.name,
                                            category.content, category.status)
             change_history.save_to_db()
-        return category.serialize()
+        return category.to_dict()
     else:
         raise CategoryIdNotFoundException([str(id)])
 

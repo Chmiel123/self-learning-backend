@@ -13,7 +13,11 @@ list_of_lesson_groups = [
 lang = Language.find_by_code('en')
 account = Account.find_by_username('john')
 for lg in list_of_lesson_groups:
-    lesson_group = LessonGroup(account.id, lg[0], lg[1], lang.id)
+    lesson_group = LessonGroup()
+    lesson_group.author_id = account.id
+    lesson_group.name = lg[0]
+    lesson_group.content = lg[1]
+    lesson_group.language_id = lang.id
     lesson_group.status = lg[3]
     lesson_group.likes = lg[4]
     lesson_group.dislikes = lg[5]

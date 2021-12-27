@@ -6,7 +6,8 @@ from src.services import services
 from src.utils.response import ok
 
 lesson_group_get_parser = reqparse.RequestParser()
-lesson_group_get_parser.add_argument('category_id', location='args', type=int, required=True)
+lesson_group_get_parser.add_argument('lesson_group_id', location='args', type=int, required=False)
+lesson_group_get_parser.add_argument('category_id', location='args', type=int, required=False)
 lesson_group_get_parser.add_argument('page_number', location='args', type=int, required=False)
 lesson_group_get_parser.add_argument('page_size', location='args', type=int, required=False)
 
@@ -24,6 +25,10 @@ class LessonGroupResource(Resource):
         tags:
           - Content
         parameters:
+          - name: lesson_group_id
+            type: int
+            in: query
+            default: null
           - name: category_id
             type: int
             in: query
@@ -41,14 +46,16 @@ class LessonGroupResource(Resource):
             description: OK.
         """
         data = lesson_group_get_parser.parse_args()
+        result = {}
+        if data['lesson_group_id']:
+            result = lesson_group_logic.get_lesson_group_by_id(data['lesson_group_id'])
+            return ok(result)
         page_number = 1
         if data['page_number']:
             page_number = data['page_number']
         page_size = services.flask.config['DEFAULT_PAGE_SIZE']
         if data['page_size']:
             page_size = data['page_size']
-        result = {}
-
         if data['category_id']:
             result = lesson_group_logic.get_lesson_groups_for_category(data['category_id'], page_number, page_size)
         return ok(result)
@@ -71,15 +78,15 @@ class LessonGroupResource(Resource):
                       id:
                         type: int
                         example: null
-                      category_id:
-                        type: int
-                        example: 1
+                      category_ids:
+                        type: array
+                        example: [5, 7]
                       name:
                         type: string
-                        example: New category
+                        example: New lesson group
                       content:
                         type: string
-                        example: New category description.
+                        example: New lesson group description.
                       status:
                         type: string
                         enum: [1, 2, 3]
