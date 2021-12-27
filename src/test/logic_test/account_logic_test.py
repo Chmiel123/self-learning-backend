@@ -6,7 +6,10 @@ from src.models.account.account import Account
 from src.models.account.email_verification import EmailVerification
 from src.models.account.password_reset import PasswordReset
 from src.test.base_test import BaseTest
-from src.utils.exceptions import ErrorException, WarningException
+from src.utils.exceptions import UserNameAlreadyExistsException, \
+    UserEmailAlreadyExistsException, WrongCredentialsException, EmailIsTheSameException, DuplicateEmailException, \
+    EmailVerificationKeyNotFoundException, EmailVerificationExpiredException, UserEmailNotFoundException, \
+    PasswordResetVerificationKeyNotFoundException, PasswordResetExpiredException
 
 
 class AccountLogicTest(BaseTest):
@@ -26,18 +29,18 @@ class AccountLogicTest(BaseTest):
 
     def test_create_account_with_password_duplicate_username(self):
         account_logic.create_account_with_password('john', 'john@example.com', 'pass')
-        self.assertRaises(ErrorException,
+        self.assertRaises(UserNameAlreadyExistsException,
                           account_logic.create_account_with_password,
                           'john', 'john2@example.com', 'pass')
 
     def test_create_account_with_password_duplicate_email(self):
         account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
-        self.assertRaises(ErrorException,
+        self.assertRaises(UserEmailAlreadyExistsException,
                           account_logic.create_account_with_password,
                           'bill', 'john@example.com', 'pass')
         account.email = 'john@example.com'
         account.save_to_db()
-        self.assertRaises(ErrorException,
+        self.assertRaises(UserEmailAlreadyExistsException,
                           account_logic.create_account_with_password,
                           'bill', 'john@example.com', 'pass')
 
@@ -53,7 +56,7 @@ class AccountLogicTest(BaseTest):
         account.save_to_db()
         logged_in_account = account_logic.login('john@example.com', 'pass')
         self.assertEqual(account, logged_in_account)
-        self.assertRaises(ErrorException,
+        self.assertRaises(WrongCredentialsException,
                           account_logic.login,
                           'bill', 'pass')
 
@@ -70,7 +73,7 @@ class AccountLogicTest(BaseTest):
         # already verified
         account.email = 'john@example.com'
         account.save_to_db()
-        self.assertRaises(WarningException,
+        self.assertRaises(EmailIsTheSameException,
                           account_logic.generate_email_verification,
                           account, 'john@example.com')
         # generate new email
@@ -80,20 +83,20 @@ class AccountLogicTest(BaseTest):
                             found_email_verification_3.verification_key)
         # another account has email verification
         account2 = account_logic.create_account_with_password('bill', 'bill@example.com', 'pass')
-        self.assertRaises(ErrorException,
+        self.assertRaises(DuplicateEmailException,
                           account_logic.generate_email_verification,
                           account, 'bill@example.com')
         # another account has email
         account2.email = 'bill@example.com'
         account2.save_to_db()
-        self.assertRaises(ErrorException,
+        self.assertRaises(DuplicateEmailException,
                           account_logic.generate_email_verification,
                           account, 'bill@example.com')
 
     def test_verify_email(self):
         account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
         # bad verification key
-        self.assertRaises(ErrorException,
+        self.assertRaises(EmailVerificationKeyNotFoundException,
                           account_logic.verify_email,
                           'aaaaaaaaaaa')
         found_email_verification = EmailVerification.find_by_account_id(account.id)
@@ -107,13 +110,13 @@ class AccountLogicTest(BaseTest):
         found_account = Account.find_by_username('john')
         found_ev = EmailVerification.find_by_account_id(found_account.id)
         found_ev.created_date = datetime.utcnow() - timedelta(hours=9999)
-        self.assertRaises(ErrorException,
+        self.assertRaises(EmailVerificationExpiredException,
                           account_logic.verify_email,
                           found_ev.verification_key)
 
     def test_generate_password_reset(self):
         account = account_logic.create_account_with_password('john', 'john@example.com', 'pass')
-        self.assertRaises(ErrorException,
+        self.assertRaises(UserEmailNotFoundException,
                           account_logic.generate_password_reset,
                           'john2@example.com')
         password_reset = account_logic.generate_password_reset('john@example.com')
@@ -128,7 +131,7 @@ class AccountLogicTest(BaseTest):
         first_password = account.password
         password_reset = account_logic.generate_password_reset('john@example.com')
         # bad verification key
-        self.assertRaises(ErrorException,
+        self.assertRaises(PasswordResetVerificationKeyNotFoundException,
                           account_logic.verify_password_reset,
                           'aaaaaaaaaaa', 'pass2')
         result = account_logic.verify_password_reset(password_reset.verification_key, 'pass2')
@@ -142,7 +145,7 @@ class AccountLogicTest(BaseTest):
         account_logic.generate_password_reset('john@example.com')
         found_pr = PasswordReset.find_by_account_id(account.id)
         found_pr.created_date = datetime.utcnow() - timedelta(hours=9999)
-        self.assertRaises(ErrorException,
+        self.assertRaises(PasswordResetExpiredException,
                           account_logic.verify_password_reset,
                           found_pr.verification_key, 'pass2')
 

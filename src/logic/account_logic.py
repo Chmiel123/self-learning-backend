@@ -3,7 +3,11 @@ from datetime import datetime, timedelta
 from src.models.account.email_verification import EmailVerification
 from src.models.account.password_reset import PasswordReset
 from src.utils.error_code import ErrorCode
-from src.utils.exceptions import ErrorException, WarningException
+from src.utils.exceptions import ErrorException, WarningException, UserNameAlreadyExistsException, \
+    UserEmailAlreadyExistsException, UserEmailNotFoundException, UserIdNotFoundException, WrongCredentialsException, \
+    DuplicateEmailException, EmailVerificationExpiredException, \
+    EmailVerificationKeyNotFoundException, PasswordResetVerificationKeyNotFoundException, PasswordResetExpiredException, \
+    EmailIsTheSameException
 from src.models.account.account import Account
 from src.utils.warning_code import WarningCode
 from src.services import services
@@ -11,11 +15,11 @@ from src.services import services
 
 def create_account_with_password(username: str, email: str, password: str) -> Account:
     if Account.find_by_username(username):
-        raise ErrorException(ErrorCode.USER_USERNAME_ALREADY_EXISTS, [username], f'User {username} already exists')
+        raise UserNameAlreadyExistsException([username])
     if Account.find_by_email(email):
-        raise ErrorException(ErrorCode.USER_EMAIL_ALREADY_EXISTS, [email], f'User with email {email} already exists')
+        raise UserEmailAlreadyExistsException([email])
     if EmailVerification.find_by_email(email):
-        raise ErrorException(ErrorCode.USER_EMAIL_ALREADY_EXISTS, [email], f'User with email {email} already exists')
+        raise UserEmailAlreadyExistsException([email])
 
     new_account = Account(username, password)
     new_account.save_to_db()
@@ -47,16 +51,16 @@ def login(username_or_email: str, password: str) -> Account:
                 return current_account
 
     else:
-        raise ErrorException(ErrorCode.WRONG_CREDENTIALS, [], 'Wrong credentials.')
+        raise WrongCredentialsException()
 
 
 def generate_email_verification(account: Account, email: str) -> EmailVerification:
     found_account = Account.find_by_email(email)
     if found_account:
         if found_account.id == account.id:
-            raise WarningException(WarningCode.EMAIL_IS_THE_SAME, [email], f'User has already verified email {email}')
+            raise EmailIsTheSameException([email])
         else:
-            raise ErrorException(ErrorCode.DUPLICATE_EMAIL, [email], f'User with email {email} already exists.')
+            raise DuplicateEmailException([email])
     found_email_verification = EmailVerification.find_by_email(email)
     if found_email_verification:
         if found_email_verification.account_id == account.id:
@@ -66,7 +70,7 @@ def generate_email_verification(account: Account, email: str) -> EmailVerificati
             services.email.send_email_verification_email(email_verification)
             return email_verification
         else:
-            raise ErrorException(ErrorCode.DUPLICATE_EMAIL, [email], f'User with email {email} already exists.')
+            raise DuplicateEmailException([email])
     found_email_verification = EmailVerification.find_by_account_id(account.id)
     if found_email_verification:
         EmailVerification.delete_by_account_id(account.id)
@@ -86,9 +90,9 @@ def verify_email(verification_key: str) -> bool:
             EmailVerification.delete_by_account_id(found_account.id)
             return True
         else:
-            raise ErrorException(ErrorCode.EMAIL_VERIFICATION_EXPIRED, [], 'Verification expired')
+            raise EmailVerificationExpiredException()
     else:
-        raise ErrorException(ErrorCode.EMAIL_COULD_NOT_BE_VERIFIED, [], 'Email could not be verified')
+        raise EmailVerificationKeyNotFoundException(verification_key)
 
 
 def generate_password_reset(email: str) -> PasswordReset:
@@ -98,7 +102,7 @@ def generate_password_reset(email: str) -> PasswordReset:
         if found_email_verification:
             found_account = Account.find_by_id(found_email_verification.account_id)
     if not found_account:
-        raise ErrorException(ErrorCode.USER_EMAIL_NOT_FOUND, [], 'User with email doesn\'t exist')
+        raise UserEmailNotFoundException()
     PasswordReset.delete_by_account_id(found_account.id)
     password_reset = PasswordReset(found_account.id)
     password_reset.save_to_db()
@@ -109,17 +113,15 @@ def generate_password_reset(email: str) -> PasswordReset:
 def verify_password_reset(verification_key: str, new_password: str) -> bool:
     found_password_reset = PasswordReset.find_by_verify_key(verification_key)
     if not found_password_reset:
-        raise ErrorException(ErrorCode.PASSWORD_RESET_VERIFICATION_KEY_NOT_FOUND, [verification_key],
-                             f'Invalid verification key: {verification_key}')
+        raise PasswordResetVerificationKeyNotFoundException([verification_key])
     max_hours = services.flask.config['PASSWORD_RESET_HOURS']
     if found_password_reset.created_date + timedelta(hours=max_hours) > datetime.utcnow():
         found_account = Account.find_by_id(found_password_reset.account_id)
         if not found_account:
-            raise ErrorException(ErrorCode.USER_ID_NOT_FOUND, [found_password_reset.account_id],
-                                 f'User with id {found_password_reset.account_id} not found')
+            raise UserIdNotFoundException([found_password_reset.account_id])
         found_account.set_password(new_password)
         found_account.save_to_db()
         return True
     else:
-        raise ErrorException(ErrorCode.PASSWORD_RESET_EXPIRED, [], 'Verification expired')
+        raise PasswordResetExpiredException()
 

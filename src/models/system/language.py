@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import TEXT
 
 from src.services import services
 from src.utils.error_code import ErrorCode
-from src.utils.exceptions import ErrorException
+from src.utils.exceptions import ErrorException, LanguageCodeNotFoundException
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
@@ -42,7 +42,7 @@ class Language(services.db.Base, PostgresSerializerMixin):
     def find_by_code(code: code) -> 'Language':
         language = services.db.session.query(Language).filter_by(code=code).first()
         if not language:
-            raise ErrorException(ErrorCode.LANGUAGE_CODE_NOT_FOUND, [code], f'Language code {code} doesn\'t exist.')
+            raise LanguageCodeNotFoundException([code])
         return language
 
     @staticmethod

@@ -55,9 +55,9 @@ def check_if_token_revoked(jwt_header, jwt_payload):
 def error_exception_handler(error: ErrorException):
     return jsonify({
         'status': 'Error',
-        'error_code': error.error_code,
+        'error_code': error.__class__.__name__,
         'parameters': error.parameters,
-        'default_message': error.default_message
+        'default_message': error.default_message.format(*error.parameters)
     }), 500
 
 
@@ -65,9 +65,9 @@ def error_exception_handler(error: ErrorException):
 def error_exception_handler(error: WarningException):
     return jsonify({
         'status': 'Warning',
-        'warning_code': error.warning_code,
+        'warning_code': error.__class__.__name__,
         'parameters': error.parameters,
-        'default_message': error.default_message
+        'default_message': error.default_message.format(*error.parameters)
     }), 200
 
 

@@ -9,7 +9,7 @@ from src.models.account.account import Account
 from src.models.account.logout_token import LogoutToken
 from src.services import services
 from src.utils.error_code import ErrorCode
-from src.utils.exceptions import ErrorException
+from src.utils.exceptions import ErrorException, UserIdOrNameNotFoundException
 from src.utils.response import ok
 
 register_parser = reqparse.RequestParser()
@@ -201,7 +201,7 @@ class AccountDetails(Resource):
         elif data['name']:
             account = Account.find_by_username(data['name'])
         if not account:
-            raise ErrorException(ErrorCode.USER_NOT_FOUND, [data['id'], data['name']], 'User not found.')
+            raise UserIdOrNameNotFoundException([data['id'], data['name']])
 
         return ok({
             'id': str(account.id),

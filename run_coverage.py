@@ -7,6 +7,18 @@ from os import environ, path
 from psycopg2._psycopg import OperationalError
 from sqlalchemy import create_engine
 
+COV = coverage.coverage(
+    branch=True,
+    include='/*',
+    omit=[
+        '/test/*',
+        'venv/*',
+        '/usr/*',
+        'C:/Program Files/*'
+    ]
+)
+COV.start()
+
 from src.services import services
 from src.services.db_postgres import DBPostgres
 
@@ -35,18 +47,6 @@ if len(sys.argv) > 1:
 pattern = f'*{pattern}*_test.py'
 
 print(f'pattern: {pattern}\n')
-
-COV = coverage.coverage(
-    branch=True,
-    include='/*',
-    omit=[
-        '/test/*',
-        'venv/*',
-        '/usr/*',
-        'C:/Program Files/*'
-    ]
-)
-COV.start()
 
 tests = unittest.TestLoader().discover('src/test/', pattern=pattern)
 result = unittest.TextTestRunner(verbosity=2).run(tests)

@@ -8,16 +8,79 @@ class SelfLearningBackendException(Exception):
 
 
 class ErrorException(SelfLearningBackendException):
-    def __init__(self, error_code: Enum, parameters: List[str] = [], default_message='Error occurred.'):
-        self.error_code = error_code.value
+    def __init__(self, parameters: List[str] = [], default_message='Error occurred'):
         self.parameters = parameters
         self.default_message = default_message
         super().__init__()
 
 
 class WarningException(SelfLearningBackendException):
-    def __init__(self, warning_code: Enum, parameters: List[str] = [], default_message='Warning.'):
-        self.warning_code = warning_code.value
+    def __init__(self, parameters: List[str] = [], default_message='Warning'):
         self.parameters = parameters
         self.default_message = default_message
         super().__init__()
+
+
+class UserNameAlreadyExistsException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User {} already exists'
+class UserEmailAlreadyExistsException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User with email {} already exists'
+class UserEmailNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User with email doesn\'t exist'
+class UserIdNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User with id {} not found'
+class UserIdOrNameNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User with id {} or name {} not found'
+class WrongCredentialsException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Wrong credentials'
+class DuplicateEmailException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User with email {} already exists'
+class EmailVerificationExpiredException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Email verification expired'
+class EmailVerificationKeyNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Email verification key {} not found'
+class PasswordResetExpiredException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Password reset expired'
+class PasswordResetVerificationKeyNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Password reset verification key {} not found'
+class LanguageCodeNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Language code {} not found'
+class CategoryIdNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Category with id {} not found'
+class AdminPrivilegeRequiredException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Admin privilege required'
+
+
+class EmailIsTheSameException(WarningException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'User has already verified email {}'
+

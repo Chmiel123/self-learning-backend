@@ -10,7 +10,7 @@ from src.models.system.entity_type import EntityType
 from src.models.system.language import Language
 from src.utils import modify
 from src.utils.error_code import ErrorCode
-from src.utils.exceptions import ErrorException
+from src.utils.exceptions import ErrorException, CategoryIdNotFoundException, AdminPrivilegeRequiredException
 
 
 def get_all_categories_for_language(language_code: str) -> object:
@@ -29,15 +29,14 @@ def create_or_update(category_dict: dict) -> Category:
     admin_privilege = AdminPrivilege.find_by_account_id_and_language_id(current_account.id,
                                                                         category_dict['language_id'])
     if not admin_privilege:
-        raise ErrorException(ErrorCode.ADMIN_PRIVILEGE_REQUIRED, [], 'Admin privilege required')
+        raise AdminPrivilegeRequiredException()
     if category_dict['id']:
         category = Category.find_by_id(category_dict['id'])
         if category:
             category = _update(category, category_dict, current_account)
             return category.serialize()
         else:
-            raise ErrorException(ErrorCode.CATEGORY_ID_NOT_FOUND, [category_dict['id']],
-                                 f'Category id: {category_dict["id"]} not found.')
+            raise CategoryIdNotFoundException([category_dict['id']])
     category = _create(category_dict, current_account)
     return category.serialize()
 
@@ -49,12 +48,12 @@ def delete(id: int):
         current_account = Account.find_by_username(current_user)
         admin_privilege = AdminPrivilege.find_by_account_id_and_language_id(current_account.id, category.language_id)
         if not admin_privilege:
-            raise ErrorException(ErrorCode.ADMIN_PRIVILEGE_REQUIRED, [], 'Admin privilege required')
+            raise AdminPrivilegeRequiredException()
         category.status = EntityStatus.deleted
         category.save_to_db()
         return category.serialize()
     else:
-        raise ErrorException(ErrorCode.CATEGORY_ID_NOT_FOUND, [str(id)], f'Category id: {id} not found.')
+        raise CategoryIdNotFoundException([str(id)])
 
 
 def _create(category_dict: dict, current_account: Account):
