@@ -1,4 +1,6 @@
-from src.logic import category_logic
+from flask_jwt_extended import create_access_token, verify_jwt_in_request
+
+from src.logic import category_logic, account_logic
 from src.models.content.category import Category
 from src.test.base_with_context_test import BaseWithContextTest
 from src.utils.exceptions import ErrorException
@@ -40,10 +42,21 @@ class CategoryLogicTest(BaseWithContextTest):
             'id': None,
             'name': 'a',
             'content': 'a is a category',
-            'language_id': 1
+            'language_id': 1,
+            'parent_id': None
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
+
+    def test_create_or_update_no_admin_privilege(self):
+        self.login_as_user()
+        self.assertRaises(ErrorException, category_logic.create_or_update, {
+            'id': None,
+            'name': 'a',
+            'content': 'a is a category',
+            'language_id': 1,
+            'parent_id': None
+        })
 
     def test_update(self):
         category_logic.create_or_update({
@@ -51,7 +64,8 @@ class CategoryLogicTest(BaseWithContextTest):
             'name': 'a',
             'content': 'a is a category',
             'language_id': 1,
-            'status': 2
+            'status': 2,
+            'parent_id': None
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
@@ -60,7 +74,8 @@ class CategoryLogicTest(BaseWithContextTest):
             'name': 'b',
             'content': 'b is a category',
             'language_id': 1,
-            'status': 2
+            'status': 2,
+            'parent_id': None
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('b is a category', found_categories['categories'][0]['content'])
@@ -70,7 +85,25 @@ class CategoryLogicTest(BaseWithContextTest):
             'id': None,
             'name': 'a',
             'content': 'a is a category',
+            'language_id': 1,
+            'parent_id': None
+        })
+        found_categories = category_logic.get_all_categories_for_language('en')
+        self.assertEqual('a', found_categories['categories'][0]['name'])
+        self.assertRaises(ErrorException, category_logic.create_or_update, {
+            'id': 2,
+            'name': 'b',
+            'content': 'b is a category',
             'language_id': 1
+        })
+
+    def test_delete(self):
+        category_logic.create_or_update({
+            'id': None,
+            'name': 'a',
+            'content': 'a is a category',
+            'language_id': 1,
+            'parent_id': None
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])

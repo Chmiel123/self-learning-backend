@@ -11,12 +11,19 @@ class BaseWithContextTest(BaseTest):
     def setUp(self):
         super().setUp()
         account_logic.create_account_with_password('john', 'john@example.com', 'pass')
+        account_logic.create_account_with_password('bill', 'bill@example.com', 'pass')
         Language('en', 'english', 'english').save_to_db()
         AdminPrivilege(1, 5, 1).save_to_db()
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = 'secret'
         self.app.config['JWT_SECRET_KEY'] = 'secret'
         JWTManager(self.app)
+        self.login_as_admin()
+
+    def tearDown(self):
+        self.c.pop()
+
+    def login_as_admin(self):
         self.c = self.app.test_request_context()
         self.c.push()
         access_token = create_access_token(identity="john", expires_delta=False, fresh=True)
@@ -26,5 +33,12 @@ class BaseWithContextTest(BaseTest):
         self.c.request.headers = headers
         verify_jwt_in_request()
 
-    def tearDown(self):
-        self.c.pop()
+    def login_as_user(self):
+        self.c = self.app.test_request_context()
+        self.c.push()
+        access_token = create_access_token(identity="bill", expires_delta=False, fresh=True)
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token)
+        }
+        self.c.request.headers = headers
+        verify_jwt_in_request()

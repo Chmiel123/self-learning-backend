@@ -50,6 +50,9 @@ class CategoryResource(Resource):
                       id:
                         type: int
                         example: null
+                      parent_id:
+                        type: int
+                        example: null
                       name:
                         type: string
                         example: New category
@@ -71,4 +74,24 @@ class CategoryResource(Resource):
         result = None
         if data['category']:
             result = category_logic.create_or_update(data['category'])
+        return ok(result)
+
+    @jwt_required()
+    def delete(self):
+        """Delete a category
+        ---
+        tags:
+          - Content
+        parameters:
+          - name: id
+            in: body
+            required: true
+            type: int
+            example: 5
+        responses:
+          200:
+            description: OK.
+        """
+        data = category_post_parser.parse_args()
+        result = category_logic.delete(data['id'])
         return ok(result)
