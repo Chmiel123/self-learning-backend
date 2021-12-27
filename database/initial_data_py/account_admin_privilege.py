@@ -6,3 +6,4 @@ found_account = Account.find_by_username("john")
 lang = Language.find_by_code('en')
 
 admin_privilege = AdminPrivilege(found_account.id, 5, lang.id)
+admin_privilege.save_to_db()

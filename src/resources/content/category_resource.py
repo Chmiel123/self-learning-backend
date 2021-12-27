@@ -10,6 +10,10 @@ category_get_parser.add_argument('language', location='args', required=True)
 category_post_parser = reqparse.RequestParser()
 category_post_parser.add_argument('category', type=dict, help='This field cannot be blank', required=True)
 
+category_delete_parser = reqparse.RequestParser()
+category_delete_parser.add_argument('id', type=int, help='This field cannot be blank', required=True)
+
+
 
 class CategoryResource(Resource):
     def get(self):
@@ -83,15 +87,18 @@ class CategoryResource(Resource):
         tags:
           - Content
         parameters:
-          - name: id
+          - name: body
             in: body
             required: true
-            type: int
-            example: 5
+            schema:
+              properties:
+                id:
+                  type: int
+                  example: 5
         responses:
           200:
             description: OK.
         """
-        data = category_post_parser.parse_args()
+        data = category_delete_parser.parse_args()
         result = category_logic.delete(data['id'])
         return ok(result)
