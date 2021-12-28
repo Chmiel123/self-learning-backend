@@ -13,7 +13,7 @@ class Lesson(services.db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'content'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
-    group_id = Column(INT, ForeignKey('content.lesson_group.id'), nullable=False, index=True)
+    course_id = Column(INT, ForeignKey('content.course.id'), nullable=False, index=True)
     author_id = Column(INT, nullable=True, index=True)
     name = Column(TEXT, nullable=False, unique=True)
     content = Column(TEXT, nullable=False)

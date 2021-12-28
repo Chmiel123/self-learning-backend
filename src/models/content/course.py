@@ -5,14 +5,14 @@ from sqlalchemy.dialects.postgresql import TEXT, ENUM
 from sqlalchemy.orm import relationship
 
 from src.models.content.category import Category
-from src.models.content.category_group_link import CategoryGroupLink
+from src.models.content.category_course_link import CategoryCourseLink
 from src.models.system.entity_status import EntityStatus
 from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
-class LessonGroup(services.db.Base, PostgresSerializerMixin):
-    __tablename__ = 'lesson_group'
+class Course(services.db.Base, PostgresSerializerMixin):
+    __tablename__ = 'course'
     __table_args__ = {'schema': 'content'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
@@ -31,26 +31,26 @@ class LessonGroup(services.db.Base, PostgresSerializerMixin):
 
     def get_parents(self):
         return services.db.session.query(Category)\
-            .join(CategoryGroupLink, Category.id == CategoryGroupLink.category_id).filter_by(group_id=self.id).all()
+            .join(CategoryCourseLink, Category.id == CategoryCourseLink.category_id).filter_by(course_id=self.id).all()
 
     @staticmethod
-    def find_by_id(id: int) -> 'LessonGroup':
-        return services.db.session.query(LessonGroup).filter_by(id=id).first()
+    def find_by_id(id: int) -> 'Course':
+        return services.db.session.query(Course).filter_by(id=id).first()
 
     @staticmethod
-    def find_by_author_id(author_id) -> 'List[LessonGroup]':
-        return services.db.session.query(LessonGroup).filter_by(author_id=author_id).all()
+    def find_by_author_id(author_id) -> 'List[Course]':
+        return services.db.session.query(Course).filter_by(author_id=author_id).all()
 
     @staticmethod
-    def find_by_category_id(category_id: int, page_number: int, page_size: int) -> 'List[LessonGroup]':
-        return services.db.session.query(LessonGroup)\
-            .join(CategoryGroupLink, LessonGroup.id == CategoryGroupLink.group_id)\
+    def find_by_category_id(category_id: int, page_number: int, page_size: int) -> 'List[Course]':
+        return services.db.session.query(Course)\
+            .join(CategoryCourseLink, Course.id == CategoryCourseLink.course_id)\
             .filter_by(category_id=category_id).limit(page_size).offset((page_number - 1) * page_size).all()
 
     @staticmethod
-    def search_in_content(search_string) -> 'List[LessonGroup]':
-        return services.db.session.query(LessonGroup).filter(LessonGroup.content.contains(search_string)).all()
+    def search_in_content(search_string) -> 'List[Course]':
+        return services.db.session.query(Course).filter(Course.content.contains(search_string)).all()
 
     @staticmethod
     def delete_by_id(id):
-        return services.db.session.query(LessonGroup).filter_by(id=id).delete()
+        return services.db.session.query(Course).filter_by(id=id).delete()

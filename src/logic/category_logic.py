@@ -54,7 +54,7 @@ def _create(category_dict: dict, current_account: Account):
     category.parent_id = category_dict['parent_id']
     category.name = category_dict['name']
     category.content = category_dict['content']
-    category.can_add_lesson_groups = category_dict['can_add_lesson_groups']
+    category.can_add_courses = category_dict['can_add_courses']
     category.status = EntityStatus.draft
     category.save_to_db()
     change_history = ChangeHistory(current_account.id, category.id, EntityType.category, category.name,
@@ -68,7 +68,7 @@ def _update(category: Category, category_dict: dict, current_account: Account) -
     changed = modify(category, category_dict['parent_id'], 'parent_id', changed)
     changed = modify(category, category_dict['name'], 'name', changed)
     changed = modify(category, category_dict['content'], 'content', changed)
-    changed = modify(category, category_dict['can_add_lesson_groups'], 'can_add_lesson_groups', changed)
+    changed = modify(category, category_dict['can_add_courses'], 'can_add_courses', changed)
     changed = modify(category, EntityStatus(category_dict['status']), 'status', changed)
     if changed:
         change_history = ChangeHistory(current_account.id, category.id, EntityType.category, category.name,

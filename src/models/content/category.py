@@ -20,8 +20,8 @@ class Category(services.db.Base, PostgresSerializerMixin):
     name = Column(TEXT, nullable=False, index=True)
     content = Column(TEXT, nullable=False)
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
-    can_add_lesson_groups = Column(BOOLEAN, default=False)
-    nr_active_lesson_groups = Column(INT, default=0)
+    can_add_courses = Column(BOOLEAN, default=False)
+    nr_active_courses = Column(INT, default=0)
     language_id = Column(INT, ForeignKey('system.language.id'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 

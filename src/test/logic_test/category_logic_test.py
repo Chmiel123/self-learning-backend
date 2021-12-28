@@ -44,7 +44,7 @@ class CategoryLogicTest(BaseWithContextTest):
             'content': 'a is a category',
             'language_id': 1,
             'parent_id': None,
-            'can_add_lesson_groups': True
+            'can_add_courses': True
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
@@ -67,7 +67,7 @@ class CategoryLogicTest(BaseWithContextTest):
             'language_id': 1,
             'status': 2,
             'parent_id': None,
-            'can_add_lesson_groups': True
+            'can_add_courses': True
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
@@ -78,7 +78,7 @@ class CategoryLogicTest(BaseWithContextTest):
             'language_id': 1,
             'status': 2,
             'parent_id': None,
-            'can_add_lesson_groups': True
+            'can_add_courses': True
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('b is a category', found_categories['categories'][0]['content'])
@@ -90,7 +90,7 @@ class CategoryLogicTest(BaseWithContextTest):
             'content': 'a is a category',
             'language_id': 1,
             'parent_id': None,
-            'can_add_lesson_groups': True
+            'can_add_courses': True
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
@@ -108,7 +108,7 @@ class CategoryLogicTest(BaseWithContextTest):
             'content': 'a is a category',
             'language_id': 1,
             'parent_id': None,
-            'can_add_lesson_groups': True
+            'can_add_courses': True
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
@@ -124,7 +124,7 @@ class CategoryLogicTest(BaseWithContextTest):
             'content': 'a is a category',
             'language_id': 1,
             'parent_id': None,
-            'can_add_lesson_groups': True
+            'can_add_courses': True
         })
         self.login_as_user()
         self.assertRaises(AdminPrivilegeRequiredException, category_logic.delete, 1)

@@ -69,7 +69,7 @@ class CategoryResource(Resource):
                       language_id:
                         type: int
                         example: 57
-                      can_add_lesson_groups:
+                      can_add_courses:
                         type: bool
                         example: true
         responses:

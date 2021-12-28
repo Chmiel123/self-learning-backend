@@ -1,31 +1,31 @@
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
-from src.logic import lesson_group_logic
+from src.logic import course_logic
 from src.services import services
 from src.utils.response import ok
 
-lesson_group_get_parser = reqparse.RequestParser()
-lesson_group_get_parser.add_argument('lesson_group_id', location='args', type=int, required=False)
-lesson_group_get_parser.add_argument('category_id', location='args', type=int, required=False)
-lesson_group_get_parser.add_argument('page_number', location='args', type=int, required=False)
-lesson_group_get_parser.add_argument('page_size', location='args', type=int, required=False)
+course_get_parser = reqparse.RequestParser()
+course_get_parser.add_argument('course_id', location='args', type=int, required=False)
+course_get_parser.add_argument('category_id', location='args', type=int, required=False)
+course_get_parser.add_argument('page_number', location='args', type=int, required=False)
+course_get_parser.add_argument('page_size', location='args', type=int, required=False)
 
-lesson_group_post_parser = reqparse.RequestParser()
-lesson_group_post_parser.add_argument('lesson_group', type=dict, help='This field cannot be blank', required=True)
+course_post_parser = reqparse.RequestParser()
+course_post_parser.add_argument('course', type=dict, help='This field cannot be blank', required=True)
 
-lesson_group_delete_parser = reqparse.RequestParser()
-lesson_group_delete_parser.add_argument('id', type=int, help='This field cannot be blank', required=True)
+course_delete_parser = reqparse.RequestParser()
+course_delete_parser.add_argument('id', type=int, help='This field cannot be blank', required=True)
 
 
-class LessonGroupResource(Resource):
+class CourseResource(Resource):
     def get(self):
         """Get lesson groups for category
         ---
         tags:
           - Content
         parameters:
-          - name: lesson_group_id
+          - name: course_id
             type: int
             in: query
             default: null
@@ -45,10 +45,10 @@ class LessonGroupResource(Resource):
           200:
             description: OK.
         """
-        data = lesson_group_get_parser.parse_args()
+        data = course_get_parser.parse_args()
         result = {}
-        if data['lesson_group_id']:
-            result = lesson_group_logic.get_lesson_group_by_id(data['lesson_group_id'])
+        if data['course_id']:
+            result = course_logic.get_course_by_id(data['course_id'])
             return ok(result)
         page_number = 1
         if data['page_number']:
@@ -57,7 +57,7 @@ class LessonGroupResource(Resource):
         if data['page_size']:
             page_size = data['page_size']
         if data['category_id']:
-            result = lesson_group_logic.get_lesson_groups_for_category(data['category_id'], page_number, page_size)
+            result = course_logic.get_courses_for_category(data['category_id'], page_number, page_size)
         return ok(result)
 
     @jwt_required()
@@ -72,7 +72,7 @@ class LessonGroupResource(Resource):
             required: true
             schema:
               properties:
-                lesson_group:
+                course:
                   type: object
                   properties:
                       id:
@@ -98,10 +98,10 @@ class LessonGroupResource(Resource):
           200:
             description: OK.
         """
-        data = lesson_group_post_parser.parse_args()
+        data = course_post_parser.parse_args()
         result = None
-        if data['lesson_group']:
-            result = lesson_group_logic.create_or_update(data['lesson_group'])
+        if data['course']:
+            result = course_logic.create_or_update(data['course'])
         return ok(result)
 
     @jwt_required()
@@ -123,6 +123,6 @@ class LessonGroupResource(Resource):
           200:
             description: OK.
         """
-        data = lesson_group_delete_parser.parse_args()
-        result = lesson_group_logic.delete(data['id'])
+        data = course_delete_parser.parse_args()
+        result = course_logic.delete(data['id'])
         return ok(result)

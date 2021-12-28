@@ -2,4 +2,4 @@ import database.initial_data_py.system_language
 import database.initial_data_py.account_account
 import database.initial_data_py.account_admin_privilege
 import database.initial_data_py.content_category
-import database.initial_data_py.content_lesson_group
+import database.initial_data_py.content_course

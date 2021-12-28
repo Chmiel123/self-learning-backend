@@ -19,6 +19,6 @@ for cat in categories:
     category.content = cat[1]
     category.language_id = lang.id
     category.parent_id = cat[2]
-    category.can_add_lesson_groups = cat[3]
+    category.can_add_courses = cat[3]
     category.created_date = datetime(2012, 12, 12)
     category.save_to_db()
