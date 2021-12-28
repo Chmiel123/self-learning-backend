@@ -1,7 +1,8 @@
+from typing import Dict, List
+
 from src.logic import account_logic
 from src.models.account.account import Account
 from src.models.content.category import Category
-from src.models.content.category_category_link import CategoryCategoryLink
 from src.models.content.change_history import ChangeHistory
 from src.models.system.entity_status import EntityStatus
 from src.models.system.entity_type import EntityType
@@ -10,7 +11,7 @@ from src.utils import modify
 from src.utils.exceptions import CategoryIdNotFoundException
 
 
-def get_all_categories_for_language(language_code: str) -> object:
+def get_all_categories_for_language(language_code: str) -> Dict[str, List[Dict[str, str]]]:
     language = Language.find_by_code(language_code)
     categories = Category.find_by_language_id(language.id)
     return {

@@ -2,18 +2,16 @@ from datetime import datetime, timedelta
 
 from flask_jwt_extended import get_jwt_identity
 
+from src.models.account.account import Account
 from src.models.account.admin_privilege import AdminPrivilege
 from src.models.account.email_verification import EmailVerification
 from src.models.account.password_reset import PasswordReset
-from src.utils.error_code import ErrorCode
-from src.utils.exceptions import ErrorException, WarningException, UserNameAlreadyExistsException, \
+from src.services import services
+from src.utils.exceptions import UserNameAlreadyExistsException, \
     UserEmailAlreadyExistsException, UserEmailNotFoundException, UserIdNotFoundException, WrongCredentialsException, \
     DuplicateEmailException, EmailVerificationExpiredException, \
     EmailVerificationKeyNotFoundException, PasswordResetVerificationKeyNotFoundException, PasswordResetExpiredException, \
     EmailIsTheSameException, AdminPrivilegeRequiredException, UserNameNotFoundException
-from src.models.account.account import Account
-from src.utils.warning_code import WarningCode
-from src.services import services
 
 
 def create_account_with_password(username: str, email: str, password: str) -> Account:
@@ -95,7 +93,7 @@ def verify_email(verification_key: str) -> bool:
         else:
             raise EmailVerificationExpiredException()
     else:
-        raise EmailVerificationKeyNotFoundException(verification_key)
+        raise EmailVerificationKeyNotFoundException([verification_key])
 
 
 def generate_password_reset(email: str) -> PasswordReset:

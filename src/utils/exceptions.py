@@ -1,7 +1,5 @@
 from typing import List
 
-from src.utils.error_code import Enum
-
 
 class SelfLearningBackendException(Exception):
     pass

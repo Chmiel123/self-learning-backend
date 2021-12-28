@@ -8,8 +8,7 @@ from src.logic import account_logic
 from src.models.account.account import Account
 from src.models.account.logout_token import LogoutToken
 from src.services import services
-from src.utils.error_code import ErrorCode
-from src.utils.exceptions import ErrorException, UserIdOrNameNotFoundException
+from src.utils.exceptions import UserIdOrNameNotFoundException
 from src.utils.response import ok
 
 register_parser = reqparse.RequestParser()
@@ -44,9 +43,7 @@ class AccountRegistration(Resource):
             description: OK.
         """
         data = register_parser.parse_args()
-        new_account = account_logic.create_account_with_password(
-            data['username'], data['email'], data['password'])
-
+        account_logic.create_account_with_password(data['username'], data['email'], data['password'])
         access_token = create_access_token(identity=data['username'],
                                            expires_delta=timedelta(
                                                hours=services.flask.config['JWT_ACCESS_TOKEN_EXPIRES_HOURS']))

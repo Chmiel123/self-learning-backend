@@ -2,7 +2,7 @@ from src.logic import category_logic
 from src.models.content.category import Category
 from src.models.system.entity_status import EntityStatus
 from src.test.base_with_context_test import BaseWithContextTest
-from src.utils.exceptions import ErrorException, LanguageCodeNotFoundException, AdminPrivilegeRequiredException, \
+from src.utils.exceptions import LanguageCodeNotFoundException, AdminPrivilegeRequiredException, \
     CategoryIdNotFoundException
 
 

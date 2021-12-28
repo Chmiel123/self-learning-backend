@@ -2,8 +2,7 @@ from sqlalchemy import Column, INT, String
 from sqlalchemy.dialects.postgresql import TEXT
 
 from src.services import services
-from src.utils.error_code import ErrorCode
-from src.utils.exceptions import ErrorException, LanguageCodeNotFoundException
+from src.utils.exceptions import LanguageCodeNotFoundException
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 

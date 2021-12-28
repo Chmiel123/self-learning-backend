@@ -21,3 +21,6 @@ six==1.16.0
 SQLAlchemy==1.4.28
 SQLAlchemy-serializer==1.4.1
 Werkzeug==2.0.2
+
+flasgger~=0.9.5
+argparse~=1.4.0

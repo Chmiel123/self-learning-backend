@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 from src.logic import account_logic
 from src.models.account.account import Account
 from src.models.content.category import Category
@@ -10,7 +12,7 @@ from src.utils import modify
 from src.utils.exceptions import CourseIdNotFoundException, NotAuthorizedException
 
 
-def get_course_by_id(course_id: int) -> object:
+def get_course_by_id(course_id: int) -> Dict[str, List[int]]:
     course = Course.find_by_id(course_id)
     links = CategoryCourseLink.find_by_course_id(course_id)
     result = course.to_dict()
@@ -18,7 +20,7 @@ def get_course_by_id(course_id: int) -> object:
     return result
 
 
-def get_courses_for_category(category_id: int, page_number: int, page_size: int) -> object:
+def get_courses_for_category(category_id: int, page_number: int, page_size: int) -> Dict[str, List[Dict[str, str]]]:
     courses = Course.find_by_category_id(category_id, page_number, page_size)
     return {
         'courses': [x.to_dict() for x in courses]
