@@ -85,10 +85,10 @@ class CategoryIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Category with id {} not found'
-class LessonGroupIdNotFoundException(ErrorException):
+class CourseIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
-        self.default_message = 'Lesson group with id {} not found'
+        self.default_message = 'Course with id {} not found'
 
 
 class EmailIsTheSameException(WarningException):

@@ -7,7 +7,7 @@ from src.models.content.course import Course
 from src.models.system.entity_status import EntityStatus
 from src.models.system.entity_type import EntityType
 from src.utils import modify
-from src.utils.exceptions import LessonGroupIdNotFoundException, NotAuthorizedException
+from src.utils.exceptions import CourseIdNotFoundException, NotAuthorizedException
 
 
 def get_course_by_id(course_id: int) -> object:
@@ -38,7 +38,7 @@ def create_or_update(course_dict: dict) -> Course:
             else:
                 raise NotAuthorizedException()
         else:
-            raise LessonGroupIdNotFoundException([course_dict['id']])
+            raise CourseIdNotFoundException([course_dict['id']])
     category = _create(course_dict, current_account)
     return category.to_dict()
 
@@ -61,7 +61,7 @@ def delete(id: int):
                 change_history.save_to_db()
         return course.to_dict()
     else:
-        raise LessonGroupIdNotFoundException([str(id)])
+        raise CourseIdNotFoundException([str(id)])
 
 
 def _create(course_dict: dict, current_account: Account):
