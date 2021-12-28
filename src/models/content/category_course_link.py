@@ -22,7 +22,7 @@ class CategoryCourseLink(services.db.Base, PostgresSerializerMixin):
         services.db.session.commit()
 
     @staticmethod
-    def find_by_top_id_bottom_id(category_id: int, course_id: int):
+    def find_by_category_id_course_id(category_id: int, course_id: int):
         return services.db.session.query(CategoryCourseLink)\
             .filter_by(category_id=category_id, course_id=course_id).first()
 

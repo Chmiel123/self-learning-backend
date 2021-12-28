@@ -87,6 +87,10 @@ class CourseIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Course with id {} not found'
+class CategoryCantAddCoursesException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Categories [{}] can\'t have courses added to them'
 
 
 class EmailIsTheSameException(WarningException):

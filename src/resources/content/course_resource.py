@@ -20,7 +20,7 @@ course_delete_parser.add_argument('id', type=int, help='This field cannot be bla
 
 class CourseResource(Resource):
     def get(self):
-        """Get lesson groups for category
+        """Get courses for category
         ---
         tags:
           - Content
@@ -62,7 +62,7 @@ class CourseResource(Resource):
 
     @jwt_required()
     def post(self):
-        """Create or Update a lesson group
+        """Create or Update a course
         ---
         tags:
           - Content
@@ -83,10 +83,10 @@ class CourseResource(Resource):
                         example: [5, 7]
                       name:
                         type: string
-                        example: New lesson group
+                        example: New course
                       content:
                         type: string
-                        example: New lesson group description.
+                        example: New course description.
                       status:
                         type: string
                         enum: [1, 2, 3]
@@ -106,7 +106,7 @@ class CourseResource(Resource):
 
     @jwt_required()
     def delete(self):
-        """Delete a lesson group
+        """Delete a course
         ---
         tags:
           - Content

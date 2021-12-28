@@ -9,10 +9,10 @@ from src.models.content.course import Course
 from src.models.system.entity_status import EntityStatus
 from src.models.system.entity_type import EntityType
 from src.utils import modify
-from src.utils.exceptions import CourseIdNotFoundException, NotAuthorizedException
+from src.utils.exceptions import CourseIdNotFoundException, NotAuthorizedException, CategoryCantAddCoursesException
 
 
-def get_course_by_id(course_id: int) -> Dict[str, List[int]]:
+def get_course_by_id(course_id: int) -> Dict[str, object]:
     course = Course.find_by_id(course_id)
     links = CategoryCourseLink.find_by_course_id(course_id)
     result = course.to_dict()
@@ -46,7 +46,7 @@ def create_or_update(course_dict: dict) -> Course:
 
 
 def delete(id: int):
-    course = Category.find_by_id(id)
+    course = Course.find_by_id(id)
     if course:
         current_account = account_logic.get_current_account()
         admin_privilege = account_logic.get_current_admin_privilege(current_account, course.language_id)
@@ -61,12 +61,15 @@ def delete(id: int):
                 change_history = ChangeHistory(current_account.id, course.id, EntityType.category,
                                                course.name, course.content, course.status)
                 change_history.save_to_db()
+        else:
+            raise NotAuthorizedException()
         return course.to_dict()
     else:
         raise CourseIdNotFoundException([str(id)])
 
 
 def _create(course_dict: dict, current_account: Account):
+    _check_for_invalid_categories(course_dict['category_ids'])
     course = Course()
     course.language_id = course_dict['language_id']
     course.author_id = current_account.id
@@ -83,6 +86,7 @@ def _create(course_dict: dict, current_account: Account):
 
 
 def _update(course: Course, course_dict: dict, current_account: Account) -> Course:
+    _check_for_invalid_categories(course_dict['category_ids'])
     changed = False
     changed = modify(course, course_dict['name'], 'name', changed)
     changed = modify(course, course_dict['content'], 'content', changed)
@@ -101,7 +105,7 @@ def _update(course: Course, course_dict: dict, current_account: Account) -> Cour
     existing_links = CategoryCourseLink.find_by_course_id(course.id)
     existing_links_stay = []
     for existing_link in existing_links:
-        if existing_link not in course_dict['category_ids']:
+        if existing_link.category_id not in course_dict['category_ids']:
             CategoryCourseLink.delete_by_category_id_course_id(existing_link.category_id, existing_link.course_id)
         else:
             existing_links_stay.append(existing_link)
@@ -120,3 +124,12 @@ def _update(course: Course, course_dict: dict, current_account: Account) -> Cour
         change_history.save_to_db()
     return course
 
+
+def _check_for_invalid_categories(category_ids: List[int]):
+    invalid_categories = []
+    for category_id in category_ids:
+        category = Category.find_by_id(category_id)
+        if not category.can_add_courses:
+            invalid_categories.append(category_id)
+    if len(invalid_categories) > 0:
+        raise CategoryCantAddCoursesException([str(invalid_categories)])
