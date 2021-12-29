@@ -273,16 +273,6 @@ class CourseLogicTest(BaseWithContextTest):
         self.assertRaises(NotAuthorizedException, course_logic.delete, 1)
 
     def test_id_not_found(self):
-        course_logic.create_or_update({
-            "id": None,
-            "category_ids": [
-                1
-            ],
-            "content": "New course description.",
-            "language_id": 1,
-            "name": "New course",
-            "status": 2
-        })
         self.assertRaises(CourseIdNotFoundException,
                           course_logic.create_or_update, {
                                 "id": 2,
