@@ -38,8 +38,8 @@ def create_or_update(lesson_dict: dict) -> Lesson:
                 raise NotAuthorizedException()
         else:
             raise LessonIdNotFoundException([lesson_dict['id']])
-    category = _create(lesson_dict, current_account)
-    return category.to_dict()
+    lesson = _create(lesson_dict, current_account)
+    return lesson.to_dict()
 
 
 def delete(id: int):
@@ -86,6 +86,7 @@ def _update(lesson: Lesson, lesson_dict: dict, current_account: Account) -> Less
     changed = modify(lesson, LessonType(lesson_dict['type']), 'type', changed)
     changed = modify(lesson, int(lesson_dict['order']), 'order', changed)
     if changed:
+        lesson.save_to_db()
         change_history = ChangeHistory(current_account.id, lesson.id, EntityType.lesson, lesson.name,
                                        lesson.content, lesson.status)
         change_history.save_to_db()

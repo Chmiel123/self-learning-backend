@@ -77,6 +77,21 @@ class LessonLogicTest(BaseWithContextTest):
         self.assertEqual("New lesson 2", lesson.name)
         self.assertEqual(LessonType.test, lesson.type)
         self.assertEqual(3, lesson.order)
+        lesson_logic.create_or_update({
+            "id": 1,
+            "course_id": 1,
+            "name": "New lesson 2",
+            "content": "New lesson description.",
+            "language_id": 1,
+            "status": 2,
+            "order": 3,
+            "type": LessonType.test.value
+        })
+        lesson = Lesson.find_by_id(1)
+        self.assertEqual(1, lesson.id)
+        self.assertEqual("New lesson 2", lesson.name)
+        self.assertEqual(LessonType.test, lesson.type)
+        self.assertEqual(3, lesson.order)
 
     def test_get_lesson(self):
         lesson_logic.create_or_update({

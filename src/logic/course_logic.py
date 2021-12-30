@@ -27,6 +27,7 @@ def get_courses_for_category(category_id: int, page_number: int, page_size: int)
     }
 
 
+# TODO: make sure that language id is the same as parent's language id
 def create_or_update(course_dict: dict) -> Course:
     current_account = account_logic.get_current_account()
     if course_dict['id']:
@@ -41,8 +42,8 @@ def create_or_update(course_dict: dict) -> Course:
                 raise NotAuthorizedException()
         else:
             raise CourseIdNotFoundException([course_dict['id']])
-    category = _create(course_dict, current_account)
-    return category.to_dict()
+    course = _create(course_dict, current_account)
+    return course.to_dict()
 
 
 def delete(id: int):
@@ -119,6 +120,7 @@ def _update(course: Course, course_dict: dict, current_account: Account) -> Cour
             CategoryCourseLink(category_id, course.id).save_to_db()
 
     if changed:
+        course.save_to_db()
         change_history = ChangeHistory(current_account.id, course.id, EntityType.course, course.name,
                                        course.content, course.status)
         change_history.save_to_db()

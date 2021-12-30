@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy import Column, INT, ForeignKey
+from sqlalchemy import Column, INT, ForeignKey, SMALLINT
 
 from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
@@ -13,7 +13,7 @@ class AdminPrivilege(services.db.Base, PostgresSerializerMixin):
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), nullable=False)
     strength = Column(INT, nullable=False)
-    language_id = Column(INT, ForeignKey('system.language.id'), nullable=False)
+    language_id = Column(SMALLINT, ForeignKey('system.language.id'), nullable=False)
 
     def __init__(self, account_id: int, strength: int, language_id: int):
         self.account_id = account_id

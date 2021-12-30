@@ -82,6 +82,17 @@ class CategoryLogicTest(BaseWithContextTest):
         })
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('b is a category', found_categories['categories'][0]['content'])
+        category_logic.create_or_update({
+            'id': 1,
+            'name': 'b',
+            'content': 'b is a category',
+            'language_id': 1,
+            'status': 2,
+            'parent_id': None,
+            'can_add_courses': True
+        })
+        found_categories = category_logic.get_all_categories_for_language('en')
+        self.assertEqual('b is a category', found_categories['categories'][0]['content'])
 
     def test_update_id_not_found(self):
         category_logic.create_or_update({
@@ -113,6 +124,9 @@ class CategoryLogicTest(BaseWithContextTest):
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual('a', found_categories['categories'][0]['name'])
         self.assertRaises(CategoryIdNotFoundException, category_logic.delete, 2)
+        category_logic.delete(1)
+        found_categories = category_logic.get_all_categories_for_language('en')
+        self.assertEqual(EntityStatus.deleted.value, found_categories['categories'][0]['status'])
         category_logic.delete(1)
         found_categories = category_logic.get_all_categories_for_language('en')
         self.assertEqual(EntityStatus.deleted.value, found_categories['categories'][0]['status'])

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, INT, DateTime, ForeignKey
+from sqlalchemy import Column, INT, DateTime, ForeignKey, SMALLINT
 from sqlalchemy.dialects.postgresql import TEXT, ENUM
 from sqlalchemy.orm import relationship
 
@@ -22,7 +22,7 @@ class Course(services.db.Base, PostgresSerializerMixin):
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
     likes = Column(INT, default=0)
     dislikes = Column(INT, default=0)
-    language_id = Column(INT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False)
+    language_id = Column(SMALLINT, ForeignKey('system.language.id', ondelete='CASCADE'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 
     def save_to_db(self):

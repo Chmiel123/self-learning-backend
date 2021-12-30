@@ -29,6 +29,8 @@ from src.resources.account.email_verification_resource import Email, EmailVerify
 from src.resources.account.password_reset_resource import PasswordResetGen, PasswordResetVerify
 from src.resources.content.category_resource import CategoryResource
 from src.resources.content.course_resource import CourseResource
+from src.resources.content.lesson_resource import LessonResource
+from src.resources.content.question_resource import QuestionResource
 
 flask = services.flask
 jwt = services.jwt
@@ -116,3 +118,5 @@ api.add_resource(PasswordResetGen, '/account/password-reset')
 api.add_resource(PasswordResetVerify, '/account/password-reset/verify')
 api.add_resource(CategoryResource, '/category')
 api.add_resource(CourseResource, '/course')
+api.add_resource(LessonResource, '/lesson')
+api.add_resource(QuestionResource, '/question')

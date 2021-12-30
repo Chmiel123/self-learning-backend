@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column, INT, DateTime, ForeignKey, BOOLEAN
+from sqlalchemy import Column, INT, DateTime, ForeignKey, BOOLEAN, SMALLINT
 from sqlalchemy.dialects.postgresql import TEXT, ENUM
 
 from src.models.system.entity_status import EntityStatus
@@ -22,7 +22,7 @@ class Category(services.db.Base, PostgresSerializerMixin):
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
     can_add_courses = Column(BOOLEAN, default=False)
     nr_active_courses = Column(INT, default=0)
-    language_id = Column(INT, ForeignKey('system.language.id'), nullable=False)
+    language_id = Column(SMALLINT, ForeignKey('system.language.id'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 
     def __init__(self):

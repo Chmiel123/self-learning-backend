@@ -95,6 +95,10 @@ class LessonIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Lesson with id {} not found'
+class QuestionIdNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Question with id {} not found'
 
 
 class EmailIsTheSameException(WarningException):

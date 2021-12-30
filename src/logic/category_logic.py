@@ -72,6 +72,7 @@ def _update(category: Category, category_dict: dict, current_account: Account) -
     changed = modify(category, category_dict['can_add_courses'], 'can_add_courses', changed)
     changed = modify(category, EntityStatus(category_dict['status']), 'status', changed)
     if changed:
+        category.save_to_db()
         change_history = ChangeHistory(current_account.id, category.id, EntityType.category, category.name,
                                        category.content, category.status)
         change_history.save_to_db()

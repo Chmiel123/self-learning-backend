@@ -24,7 +24,7 @@ class Lesson(services.db.Base, PostgresSerializerMixin):
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
     likes = Column(INT, default=0)
     dislikes = Column(INT, default=0)
-    language_id = Column(INT, ForeignKey('system.language.id'), nullable=False)
+    language_id = Column(SMALLINT, ForeignKey('system.language.id'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 
     def save_to_db(self):
