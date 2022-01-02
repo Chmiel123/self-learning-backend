@@ -10,7 +10,7 @@ from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
 class Question(services.db.Base, PostgresSerializerMixin):
-    __tablename__ = 'quiz_question'
+    __tablename__ = 'question'
     __table_args__ = {'schema': 'content'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)

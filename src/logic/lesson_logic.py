@@ -2,13 +2,16 @@ from typing import Dict, List
 
 from src.logic import account_logic
 from src.models.account.account import Account
+from src.models.account.admin_privilege import AdminPrivilege
 from src.models.content.change_history import ChangeHistory
+from src.models.content.course import Course
 from src.models.content.lesson import Lesson
 from src.models.system.entity_status import EntityStatus
 from src.models.system.entity_type import EntityType
 from src.models.system.lesson_type import LessonType
 from src.utils import modify
-from src.utils.exceptions import LessonIdNotFoundException, NotAuthorizedException
+from src.utils.exceptions import LessonIdNotFoundException, NotAuthorizedException, LessonLanguageIdInvalidException, \
+    CourseIdNotFoundException
 
 
 def get_lesson_by_id(lesson_id: int) -> Dict[str, object]:
@@ -38,6 +41,16 @@ def create_or_update(lesson_dict: dict) -> Lesson:
                 raise NotAuthorizedException()
         else:
             raise LessonIdNotFoundException([lesson_dict['id']])
+    parent_course = Course.find_by_id(lesson_dict['course_id'])
+    if parent_course:
+        if lesson_dict['language_id'] != parent_course.language_id:
+            raise LessonLanguageIdInvalidException([lesson_dict['language_id']])
+        admin_privilege = AdminPrivilege.find_by_account_id_and_language_id(current_account.id,
+                                                                            lesson_dict['language_id'])
+        if parent_course.author_id != current_account.id and not admin_privilege:
+            raise NotAuthorizedException()
+    else:
+        raise CourseIdNotFoundException([lesson_dict['course_id']])
     lesson = _create(lesson_dict, current_account)
     return lesson.to_dict()
 

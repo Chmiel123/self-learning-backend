@@ -27,7 +27,6 @@ def get_courses_for_category(category_id: int, page_number: int, page_size: int)
     }
 
 
-# TODO: make sure that language id is the same as parent's language id
 def create_or_update(course_dict: dict) -> Course:
     current_account = account_logic.get_current_account()
     if course_dict['id']:
@@ -70,7 +69,7 @@ def delete(id: int):
 
 
 def _create(course_dict: dict, current_account: Account):
-    _check_for_invalid_categories(course_dict['category_ids'])
+    _check_for_invalid_categories(course_dict['category_ids'], course_dict['language_id'])
     course = Course()
     course.language_id = course_dict['language_id']
     course.author_id = current_account.id
@@ -87,7 +86,7 @@ def _create(course_dict: dict, current_account: Account):
 
 
 def _update(course: Course, course_dict: dict, current_account: Account) -> Course:
-    _check_for_invalid_categories(course_dict['category_ids'])
+    _check_for_invalid_categories(course_dict['category_ids'], course_dict['language_id'])
     changed = False
     changed = modify(course, course_dict['name'], 'name', changed)
     changed = modify(course, course_dict['content'], 'content', changed)
@@ -127,11 +126,11 @@ def _update(course: Course, course_dict: dict, current_account: Account) -> Cour
     return course
 
 
-def _check_for_invalid_categories(category_ids: List[int]):
+def _check_for_invalid_categories(category_ids: List[int], language_id: int):
     invalid_categories = []
     for category_id in category_ids:
         category = Category.find_by_id(category_id)
-        if not category.can_add_courses:
+        if (not category.can_add_courses) or category.language_id != language_id:
             invalid_categories.append(category_id)
     if len(invalid_categories) > 0:
         raise CategoryCantAddCoursesException([str(invalid_categories)])

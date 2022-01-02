@@ -5,7 +5,7 @@ from src.models.account.account import Account
 from src.models.content.lesson import Lesson
 from src.models.content.question import Question
 from src.utils import modify
-from src.utils.exceptions import QuestionIdNotFoundException, NotAuthorizedException
+from src.utils.exceptions import QuestionIdNotFoundException, NotAuthorizedException, LessonIdNotFoundException
 
 
 def get_questions_for_lesson(lesson_id: int) -> Dict[str, List[Dict[str, str]]]:
@@ -18,6 +18,8 @@ def get_questions_for_lesson(lesson_id: int) -> Dict[str, List[Dict[str, str]]]:
 def create_or_update(question_dict: dict) -> Question:
     current_account = account_logic.get_current_account()
     lesson = Lesson.find_by_id(question_dict['lesson_id'])
+    if not lesson:
+        raise LessonIdNotFoundException([question_dict['lesson_id']])
     admin_privilege = account_logic.get_current_admin_privilege(current_account, lesson.language_id)
     if current_account.id == lesson.author_id or admin_privilege:
         if question_dict['id']:
@@ -28,9 +30,9 @@ def create_or_update(question_dict: dict) -> Question:
             else:
                 raise QuestionIdNotFoundException([question_dict['id']])
         question = _create(question_dict)
+        return question.to_dict()
     else:
         raise NotAuthorizedException()
-    return question.to_dict()
 
 
 def delete(id: int):

@@ -6,7 +6,7 @@ from src.models.content.lesson import Lesson
 from src.models.content.question import Question
 from src.models.system.entity_status import EntityStatus
 from src.test.base_with_context_test import BaseWithContextTest
-from src.utils.exceptions import QuestionIdNotFoundException, NotAuthorizedException
+from src.utils.exceptions import QuestionIdNotFoundException, NotAuthorizedException, LessonIdNotFoundException
 
 
 class QuestionLogicTest(BaseWithContextTest):
@@ -197,3 +197,16 @@ class QuestionLogicTest(BaseWithContextTest):
                                 "solution": "Explanation goes here."
                             })
         self.assertRaises(QuestionIdNotFoundException, question_logic.delete, 3)
+
+    def test_lesson_id_not_found(self):
+        self.assertRaises(LessonIdNotFoundException,
+                          question_logic.create_or_update, {
+                                "id": None,
+                                "lesson_id": 2,
+                                "order_begin": 2,
+                                "order_end": 3,
+                                "question": "Question 1",
+                                "available_answers": ['A', 'B', 'C', 'D'],
+                                "correct_answers": ['C'],
+                                "solution": "Explanation goes here."
+                            })

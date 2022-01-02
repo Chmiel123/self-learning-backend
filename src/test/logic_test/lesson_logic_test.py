@@ -1,12 +1,15 @@
 from src.logic import lesson_logic
+from src.models.account.admin_privilege import AdminPrivilege
 from src.models.content.category import Category
 from src.models.content.category_course_link import CategoryCourseLink
 from src.models.content.course import Course
 from src.models.content.lesson import Lesson
 from src.models.system.entity_status import EntityStatus
+from src.models.system.language import Language
 from src.models.system.lesson_type import LessonType
 from src.test.base_with_context_test import BaseWithContextTest
-from src.utils.exceptions import NotAuthorizedException, LessonIdNotFoundException
+from src.utils.exceptions import NotAuthorizedException, LessonIdNotFoundException, CourseIdNotFoundException, \
+    LessonLanguageIdInvalidException
 
 
 class LessonLogicTest(BaseWithContextTest):
@@ -192,3 +195,45 @@ class LessonLogicTest(BaseWithContextTest):
                               "type": LessonType.lesson.value
                           })
         self.assertRaises(LessonIdNotFoundException, lesson_logic.delete, 3)
+
+    def test_parent_course_id_not_found(self):
+        self.assertRaises(CourseIdNotFoundException,
+                          lesson_logic.create_or_update, {
+                              "id": None,
+                              "course_id": 2,
+                              "name": "New lesson 1",
+                              "content": "New lesson description.",
+                              "language_id": 1,
+                              "status": 1,
+                              "order": 2,
+                              "type": LessonType.lesson.value
+                          })
+
+    def test_parent_course_different_langugage_id(self):
+        Language('es', 'spanish', 'espanol').save_to_db()
+        AdminPrivilege(1, 5, 2).save_to_db()
+        self.assertRaises(LessonLanguageIdInvalidException,
+                          lesson_logic.create_or_update, {
+                              "id": None,
+                              "course_id": 1,
+                              "name": "New lesson 1",
+                              "content": "New lesson description.",
+                              "language_id": 2,
+                              "status": 1,
+                              "order": 2,
+                              "type": LessonType.lesson.value
+                          })
+
+    def test_parent_course_different_user_id(self):
+        self.login_as_user()
+        self.assertRaises(NotAuthorizedException,
+                          lesson_logic.create_or_update, {
+                              "id": None,
+                              "course_id": 1,
+                              "name": "New lesson 1",
+                              "content": "New lesson description.",
+                              "language_id": 1,
+                              "status": 1,
+                              "order": 2,
+                              "type": LessonType.lesson.value
+                          })

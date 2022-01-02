@@ -127,8 +127,7 @@ def verify_password_reset(verification_key: str, new_password: str) -> bool:
         raise PasswordResetExpiredException()
 
 
-def check_if_admin_privilege(language_id: int):
-    current_account = get_current_account()
+def check_if_admin_privilege(current_account: Account, language_id: int):
     admin_privilege = get_current_admin_privilege(current_account, language_id)
     if not admin_privilege:
         raise AdminPrivilegeRequiredException()

@@ -83,6 +83,10 @@ class CategoryIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Category with id {} not found'
+class CategoryLanguageIdInvalidException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Invalid language id: {}'
 class CourseIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
@@ -95,6 +99,10 @@ class LessonIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Lesson with id {} not found'
+class LessonLanguageIdInvalidException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Invalid language id: {}'
 class QuestionIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
