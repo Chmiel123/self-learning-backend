@@ -107,6 +107,15 @@ class QuestionIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Question with id {} not found'
+class AccountEntityTagIdNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Account Entity Tag with id {} not found'
+# utils errors
+class IdRangeInvalidException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Invalid id range: {}. Should be "a-b"'
 
 
 class EmailIsTheSameException(WarningException):

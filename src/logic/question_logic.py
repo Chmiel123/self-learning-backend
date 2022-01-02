@@ -25,7 +25,7 @@ def create_or_update(question_dict: dict) -> Question:
         if question_dict['id']:
             question = Question.find_by_id(question_dict['id'])
             if question:
-                question = _update(question, question_dict, current_account)
+                question = _update(question, question_dict)
                 return question.to_dict()
             else:
                 raise QuestionIdNotFoundException([question_dict['id']])
@@ -49,7 +49,6 @@ def delete(id: int):
         raise QuestionIdNotFoundException(id)
 
 
-
 def _create(question_dict: dict):
     question = Question()
     question.lesson_id = question_dict['lesson_id']
@@ -64,7 +63,7 @@ def _create(question_dict: dict):
     return question
 
 
-def _update(question: Question, question_dict: dict, current_account: Account) -> Question:
+def _update(question: Question, question_dict: dict) -> Question:
     changed = False
     changed = modify(question, question_dict['order_begin'], 'order_begin', changed)
     changed = modify(question, question_dict['order_end'], 'order_end', changed)

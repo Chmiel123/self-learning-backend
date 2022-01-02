@@ -45,7 +45,8 @@ class Course(services.db.Base, PostgresSerializerMixin):
     def find_by_category_id(category_id: int, page_number: int, page_size: int) -> 'List[Course]':
         return services.db.session.query(Course)\
             .join(CategoryCourseLink, Course.id == CategoryCourseLink.course_id)\
-            .filter_by(category_id=category_id).limit(page_size).offset((page_number - 1) * page_size).all()
+            .filter_by(category_id=category_id).order_by(Course.likes).limit(page_size)\
+            .offset((page_number - 1) * page_size).all()
 
     @staticmethod
     def search_in_content(search_string) -> 'List[Course]':

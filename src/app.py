@@ -31,6 +31,7 @@ from src.resources.content.category_resource import CategoryResource
 from src.resources.content.course_resource import CourseResource
 from src.resources.content.lesson_resource import LessonResource
 from src.resources.content.question_resource import QuestionResource
+from src.resources.content.account_entity_tag_resource import AccountEntityTagResource
 
 flask = services.flask
 jwt = services.jwt
@@ -120,3 +121,4 @@ api.add_resource(CategoryResource, '/category')
 api.add_resource(CourseResource, '/course')
 api.add_resource(LessonResource, '/lesson')
 api.add_resource(QuestionResource, '/question')
+api.add_resource(AccountEntityTagResource, '/tag')

@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import Column, INT, ForeignKey, BOOLEAN
 from sqlalchemy.dialects.postgresql import ENUM
 
@@ -6,7 +8,7 @@ from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
-class AccountEntityTags(services.db.Base, PostgresSerializerMixin):
+class AccountEntityTag(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'account_entity_tags'
     __table_args__ = {'schema': 'content'}
 
@@ -18,11 +20,6 @@ class AccountEntityTags(services.db.Base, PostgresSerializerMixin):
     favorite = Column(BOOLEAN, default=False)
     in_progress = Column(BOOLEAN, default=False)
     completed = Column(BOOLEAN, default=False)
-
-    def __init__(self, account_id: int, entity_id: int, entity_type: EntityType):
-        self.account_id = account_id
-        self.entity_id = entity_id
-        self.entity_type = entity_type
 
     def save_to_db(self):
         services.db.session.add(self)
@@ -52,22 +49,30 @@ class AccountEntityTags(services.db.Base, PostgresSerializerMixin):
             self.in_progress = False
 
     @staticmethod
-    def find_by_account_id_and_entity_id(account_id: int, entity_id: int, entity_type: EntityType)\
-            -> 'AccountEntityTags':
-        return services.db.session.query(AccountEntityTags)\
+    def find_by_account_id_and_entity_id(account_id: int, entity_id: int, entity_type: EntityType) \
+            -> 'AccountEntityTag':
+        return services.db.session.query(AccountEntityTag) \
             .filter_by(account_id=account_id, entity_id=entity_id, entity_type=entity_type).first()
 
     @staticmethod
-    def find_by_account_id(account_id, entity_type: EntityType) -> 'List[AccountEntityTags]':
-        return services.db.session.query(AccountEntityTags)\
+    def find_by_account_id_and_entity_type(account_id: int, entity_type: EntityType, entity_id_start: int,
+                                           entity_id_end: int) -> 'List[AccountEntityTag]':
+        return services.db.session.query(AccountEntityTag) \
+            .filter(AccountEntityTag.entity_id >= entity_id_start, AccountEntityTag.entity_id <= entity_id_end,
+                    AccountEntityTag.account_id == account_id, AccountEntityTag.entity_type == entity_type, ) \
+            .order_by(AccountEntityTag.entity_id).all()
+
+    @staticmethod
+    def find_by_account_id(account_id, entity_type: EntityType) -> 'List[AccountEntityTag]':
+        return services.db.session.query(AccountEntityTag) \
             .filter_by(account_id=account_id, entity_type=entity_type).all()
 
     @staticmethod
-    def find_by_entity_id(entity_id, entity_type: EntityType) -> 'List[AccountEntityTags]':
-        return services.db.session.query(AccountEntityTags)\
+    def find_by_entity_id(entity_id, entity_type: EntityType) -> 'List[AccountEntityTag]':
+        return services.db.session.query(AccountEntityTag) \
             .filter_by(entity_id=entity_id, entity_type=entity_type).all()
 
     @staticmethod
     def delete_by_account_id_and_entity_id(account_id: int, entity_id: int, entity_type: EntityType):
-        return services.db.session.query(AccountEntityTags)\
+        return services.db.session.query(AccountEntityTag) \
             .filter_by(account_id=account_id, entity_id=entity_id, entity_type=entity_type).delete()

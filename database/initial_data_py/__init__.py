@@ -5,3 +5,4 @@ import database.initial_data_py.content_category
 import database.initial_data_py.content_course
 import database.initial_data_py.content_lesson
 import database.initial_data_py.content_question
+import database.initial_data_py.content_account_entity_tag
