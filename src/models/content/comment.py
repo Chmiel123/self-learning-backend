@@ -21,12 +21,6 @@ class Comment(services.db.Base, PostgresSerializerMixin):
     dislikes = Column(INT, default=0)
     created_date = Column(DateTime, default=datetime.utcnow)
 
-    def __init__(self, author_id: int, parent_id: int, parent_type: EntityType, content: str):
-        self.author_id = author_id
-        self.parent_id = parent_id
-        self.parent_type = parent_type
-        self.content = content
-
     def save_to_db(self):
         services.db.session.add(self)
         services.db.session.commit()

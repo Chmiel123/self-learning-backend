@@ -12,7 +12,7 @@ account_entity_tag_post_parser = reqparse.RequestParser()
 account_entity_tag_post_parser.add_argument('account_entity_tag', type=dict, help='This field cannot be blank', required=True)
 
 account_entity_tag_delete_parser = reqparse.RequestParser()
-account_entity_tag_delete_parser.add_argument('id', type=int, help='This field cannot be blank', required=True)
+account_entity_tag_delete_parser.add_argument('account_entity_tag', type=dict, help='This field cannot be blank', required=True)
 
 
 class AccountEntityTagResource(Resource):
@@ -101,13 +101,20 @@ class AccountEntityTagResource(Resource):
             required: true
             schema:
               properties:
-                id:
-                  type: int
-                  example: 1
+                account_entity_tag:
+                  type: object
+                  properties:
+                      entity_id:
+                        type: int
+                        example: 1
+                      entity_type:
+                        type: string
+                        enum: [1, 2, 3, 4, 5]
+                        example: 1
         responses:
           200:
             description: OK.
         """
         data = account_entity_tag_delete_parser.parse_args()
-        result = account_entity_tag_logic.delete(data['id'])
+        result = account_entity_tag_logic.delete(data['account_entity_tag'])
         return ok(result)

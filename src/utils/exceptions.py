@@ -110,7 +110,25 @@ class QuestionIdNotFoundException(ErrorException):
 class AccountEntityTagIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
-        self.default_message = 'Account Entity Tag with id {} not found'
+        self.default_message = 'Account Entity Tag with entity id {} and entity type {} not found'
+class AccountEntityTagLikeDislikeBothTrueException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Like and dislike cannot be true at the same time'
+class AccountEntityTagInProgressCompletedBothTrueException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'In progress and completed cannot be true at the same time'
+class CommentIdNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Comment with id {} not found'
+
+class EntityTypeNotSupportedException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Entity type {} not supported for this operation'
+
 # utils errors
 class IdRangeInvalidException(ErrorException):
     def __init__(self, parameters: List[str] = []):
