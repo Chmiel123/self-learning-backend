@@ -83,7 +83,7 @@ class LessonResource(Resource):
                         example: 1
                       language_id:
                         type: int
-                        example: 57
+                        example: 37
         responses:
           200:
             description: OK.

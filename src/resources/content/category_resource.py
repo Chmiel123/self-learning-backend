@@ -68,7 +68,7 @@ class CategoryResource(Resource):
                         example: 1
                       language_id:
                         type: int
-                        example: 57
+                        example: 37
                       can_add_courses:
                         type: bool
                         example: true
