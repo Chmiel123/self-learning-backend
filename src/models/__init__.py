@@ -1,0 +1,25 @@
+from src.models.content.comment import Comment
+from src.models.content.course import Course
+from src.models.content.lesson import Lesson
+from src.models.system.entity_type import EntityType
+from src.utils.exceptions import CourseIdNotFoundException, LessonIdNotFoundException, CommentIdNotFoundException, \
+    EntityTypeNotSupportedException
+
+
+def get_parent_entity(entity_id: int, entity_type: EntityType) -> object:
+    parent_entity = None
+    if entity_type == EntityType.course:
+        parent_entity = Course.find_by_id(entity_id)
+        if not parent_entity:
+            raise CourseIdNotFoundException([entity_id])
+    elif entity_type == EntityType.lesson:
+        parent_entity = Lesson.find_by_id(entity_id)
+        if not parent_entity:
+            raise LessonIdNotFoundException([entity_id])
+    elif entity_type == EntityType.comment:
+        parent_entity = Comment.find_by_id(entity_id)
+        if not parent_entity:
+            raise CommentIdNotFoundException([entity_id])
+    else:
+        raise EntityTypeNotSupportedException([entity_type.value])
+    return parent_entity

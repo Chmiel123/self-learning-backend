@@ -1,4 +1,5 @@
 from src.logic import account_logic
+from src.models import get_parent_entity
 from src.models.account.account import Account
 from src.models.content.account_entity_tag import AccountEntityTag
 from src.models.content.comment import Comment
@@ -50,27 +51,16 @@ def _create(account_entity_tag_dict: dict, current_account: Account) -> AccountE
     tag.account_id = current_account.id
     tag.entity_id = account_entity_tag_dict['entity_id']
     tag.entity_type = EntityType(account_entity_tag_dict['entity_type'])
-
-    if tag.entity_type == EntityType.course:
-        if not Course.find_by_id(tag.entity_id):
-            raise CourseIdNotFoundException([tag.entity_id])
-    elif tag.entity_type == EntityType.lesson:
-        if not Lesson.find_by_id(tag.entity_id):
-            raise LessonIdNotFoundException([tag.entity_id])
-    elif tag.entity_type == EntityType.comment:
-        if not Comment.find_by_id(tag.entity_id):
-            raise CommentIdNotFoundException([tag.entity_id])
-    else:
-        raise EntityTypeNotSupportedException([tag.entity_type.value])
+    parent_entity = get_parent_entity(tag.entity_id, tag.entity_type)
 
     if account_entity_tag_dict['like'] == 'true' and account_entity_tag_dict['dislike'] == 'true':
         raise AccountEntityTagLikeDislikeBothTrueException()
     tag.like = account_entity_tag_dict['like'] == 'true'
     if tag.like:
-        _change_like(+1, tag.entity_id, tag.entity_type)
+        _change_like(+1, parent_entity)
     tag.dislike = account_entity_tag_dict['dislike'] == 'true'
     if tag.dislike:
-        _change_dislike(+1, tag.entity_id, tag.entity_type)
+        _change_dislike(+1, parent_entity)
     tag.favorite = account_entity_tag_dict['favorite'] == 'true'
     if account_entity_tag_dict['in_progress'] == 'true' and account_entity_tag_dict['completed'] == 'true':
         raise AccountEntityTagInProgressCompletedBothTrueException()
@@ -81,16 +71,17 @@ def _create(account_entity_tag_dict: dict, current_account: Account) -> AccountE
 
 
 def _update(tag: AccountEntityTag, account_entity_tag_dict: dict) -> AccountEntityTag:
+    parent_entity = get_parent_entity(tag.entity_id, tag.entity_type)
     changed = False
     if tag.like and not account_entity_tag_dict['like'] == 'true':
-        _change_like(-1, tag.entity_id, tag.entity_type)
+        _change_like(-1, parent_entity)
     elif not tag.like and account_entity_tag_dict['like'] == 'true':
-        _change_like(+1, tag.entity_id, tag.entity_type)
+        _change_like(+1, parent_entity)
     changed = modify(tag, account_entity_tag_dict['like'] == 'true', 'like', changed)
     if tag.dislike and not account_entity_tag_dict['dislike'] == 'true':
-        _change_dislike(-1, tag.entity_id, tag.entity_type)
+        _change_dislike(-1, parent_entity)
     elif not tag.dislike and account_entity_tag_dict['dislike'] == 'true':
-        _change_dislike(+1, tag.entity_id, tag.entity_type)
+        _change_dislike(+1, parent_entity)
     changed = modify(tag, account_entity_tag_dict['dislike'] == 'true', 'dislike', changed)
     changed = modify(tag, account_entity_tag_dict['favorite'] == 'true', 'favorite', changed)
     changed = modify(tag, account_entity_tag_dict['in_progress'] == 'true', 'in_progress', changed)
@@ -100,28 +91,14 @@ def _update(tag: AccountEntityTag, account_entity_tag_dict: dict) -> AccountEnti
     return tag
 
 
-def _change_like(change: int, entity_id: int, entity_type: EntityType):
-    _change(change, entity_id, entity_type, 'likes')
+def _change_like(change: int, parent_entity: object):
+    _change(change, parent_entity, 'likes')
 
 
-def _change_dislike(change: int, entity_id: int, entity_type: EntityType):
-    _change(change, entity_id, entity_type, 'dislikes')
+def _change_dislike(change: int, parent_entity: object):
+    _change(change, parent_entity, 'dislikes')
 
 
-def _change(change: int, entity_id: int, entity_type: EntityType, field: str):
-    # TODO: get entity from funtion above
-    if entity_type == EntityType.course:
-        course = Course.find_by_id(entity_id)
-        if course:
-            course.__setattr__(field, course.__getattribute__(field) + change)
-            course.save_to_db()
-    elif entity_type == EntityType.lesson:
-        lesson = Lesson.find_by_id(entity_id)
-        if lesson:
-            lesson.__setattr__(field, lesson.__getattribute__(field) + change)
-            lesson.save_to_db()
-    elif entity_type == EntityType.comment:
-        comment = Comment.find_by_id(entity_id)
-        if comment:
-            comment.__setattr__(field, comment.__getattribute__(field) + change)
-            comment.save_to_db()
+def _change(change: int, parent_entity: object, field: str):
+    parent_entity.__setattr__(field, parent_entity.__getattribute__(field) + change)
+    parent_entity.save_to_db()

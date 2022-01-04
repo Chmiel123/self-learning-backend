@@ -148,7 +148,3 @@ class AccountLogicTest(BaseTest):
         self.assertRaises(PasswordResetExpiredException,
                           account_logic.verify_password_reset,
                           found_pr.verification_key, 'pass2')
-
-
-if __name__ == '__main__':
-    unittest.main()

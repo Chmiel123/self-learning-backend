@@ -169,6 +169,76 @@ class AccountEntityTagLogicTest(BaseWithContextTest):
         self.assertEqual(False, tag.in_progress)
         self.assertEqual(True, tag.completed)
 
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 3,
+            "like": "true",
+            "dislike": "false",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        tag = AccountEntityTag.find_by_account_id_and_entity_id(1, 1, EntityType.lesson)
+        self.assertEqual(1, tag.entity_id)
+        self.assertEqual(EntityType.lesson, tag.entity_type)
+        self.assertEqual(True, tag.like)
+        self.assertEqual(False, tag.dislike)
+        self.assertEqual(True, tag.favorite)
+        self.assertEqual(True, tag.in_progress)
+        self.assertEqual(False, tag.completed)
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 3,
+            "like": "false",
+            "dislike": "true",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        tag = AccountEntityTag.find_by_account_id_and_entity_id(1, 1, EntityType.lesson)
+        self.assertEqual(1, tag.entity_id)
+        self.assertEqual(EntityType.lesson, tag.entity_type)
+        self.assertEqual(False, tag.like)
+        self.assertEqual(True, tag.dislike)
+        self.assertEqual(True, tag.favorite)
+        self.assertEqual(True, tag.in_progress)
+        self.assertEqual(False, tag.completed)
+
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 4,
+            "like": "true",
+            "dislike": "false",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        tag = AccountEntityTag.find_by_account_id_and_entity_id(1, 1, EntityType.comment)
+        self.assertEqual(1, tag.entity_id)
+        self.assertEqual(EntityType.comment, tag.entity_type)
+        self.assertEqual(True, tag.like)
+        self.assertEqual(False, tag.dislike)
+        self.assertEqual(True, tag.favorite)
+        self.assertEqual(True, tag.in_progress)
+        self.assertEqual(False, tag.completed)
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 4,
+            "like": "false",
+            "dislike": "true",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        tag = AccountEntityTag.find_by_account_id_and_entity_id(1, 1, EntityType.comment)
+        self.assertEqual(1, tag.entity_id)
+        self.assertEqual(EntityType.comment, tag.entity_type)
+        self.assertEqual(False, tag.like)
+        self.assertEqual(True, tag.dislike)
+        self.assertEqual(True, tag.favorite)
+        self.assertEqual(True, tag.in_progress)
+        self.assertEqual(False, tag.completed)
+
     def test_get_account_entity_tags_for_entities(self):
         account_entity_tag_logic.create_or_update({
             "entity_id": 1,
@@ -271,3 +341,54 @@ class AccountEntityTagLogicTest(BaseWithContextTest):
                                 "in_progress": "true",
                                 "completed": "true"
                             })
+
+    def test_number_of_likes_and_dislikes(self):
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 2,
+            "like": "false",
+            "dislike": "true",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        course = Course.find_by_id(1)
+        self.assertEqual(0, course.likes)
+        self.assertEqual(1, course.dislikes)
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 2,
+            "like": "true",
+            "dislike": "false",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        course = Course.find_by_id(1)
+        self.assertEqual(1, course.likes)
+        self.assertEqual(0, course.dislikes)
+
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 3,
+            "like": "true",
+            "dislike": "false",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        lesson = Lesson.find_by_id(1)
+        self.assertEqual(1, lesson.likes)
+        self.assertEqual(0, lesson.dislikes)
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 3,
+            "like": "false",
+            "dislike": "true",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        lesson = Lesson.find_by_id(1)
+        self.assertEqual(0, lesson.likes)
+        self.assertEqual(1, lesson.dislikes)
