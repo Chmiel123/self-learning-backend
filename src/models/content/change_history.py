@@ -17,7 +17,7 @@ class ChangeHistory(services.db.Base, PostgresSerializerMixin):
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     author_id = Column(INT, nullable=True, index=True)
     parent_id = Column(INT, nullable=True, index=True)
-    parent_type = Column(ENUM(EntityType), nullable=False)
+    parent_type = Column(ENUM(EntityType), nullable=False, index=True)
     name = Column(TEXT, nullable=False, index=True)
     content = Column(TEXT, nullable=False)
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)

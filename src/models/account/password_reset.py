@@ -14,7 +14,7 @@ class PasswordReset(services.db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'account'}
 
     account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), primary_key=True,
-                        unique=True, nullable=False)
+                        unique=True, nullable=False, index=True)
     verification_key = Column(TEXT, nullable=False, index=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 

@@ -15,7 +15,7 @@ class Course(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'course'
     __table_args__ = {'schema': 'content'}
 
-    id = Column(INT, primary_key=True, unique=True, nullable=False)
+    id = Column(INT, primary_key=True, unique=True, nullable=False, index=True)
     author_id = Column(INT, nullable=False, index=True)
     name = Column(TEXT, nullable=False, index=True)
     content = Column(TEXT, nullable=False)

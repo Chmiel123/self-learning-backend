@@ -12,10 +12,10 @@ class Comment(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'comment'
     __table_args__ = {'schema': 'content'}
 
-    id = Column(INT, primary_key=True, unique=True, nullable=False)
+    id = Column(INT, primary_key=True, unique=True, nullable=False, index=True)
     author_id = Column(INT, nullable=True, index=True)
     parent_id = Column(INT, nullable=True, index=True)
-    parent_type = Column(ENUM(EntityType), nullable=False)
+    parent_type = Column(ENUM(EntityType), nullable=False, index=True)
     content = Column(TEXT, nullable=False)
     likes = Column(INT, default=0)
     dislikes = Column(INT, default=0)

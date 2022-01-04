@@ -11,8 +11,8 @@ class AdminPrivilege(services.db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'account'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
-    account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), nullable=False)
-    language_id = Column(SMALLINT, ForeignKey('system.language.id'), nullable=False)
+    account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), nullable=False, index=True)
+    language_id = Column(SMALLINT, ForeignKey('system.language.id'), nullable=False, index=True)
     strength = Column(INT, nullable=False)
 
     def save_to_db(self):

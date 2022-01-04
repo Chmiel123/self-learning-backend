@@ -14,11 +14,6 @@ class Translation(services.db.Base, PostgresSerializerMixin):
     target_id = Column(INT, primary_key=True, unique=False, nullable=False)
     entity_type = Column(ENUM(EntityType), primary_key=True, nullable=False)
 
-    def __init__(self, source_id: int, target_id: int, entity_type: EntityType):
-        self.source_id = source_id
-        self.target_id = target_id
-        self.entity_type = entity_type
-
     def save_to_db(self):
         services.db.session.add(self)
         services.db.session.commit()

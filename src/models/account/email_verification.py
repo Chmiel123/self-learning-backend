@@ -15,8 +15,8 @@ class EmailVerification(services.db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'account'}
 
     account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), primary_key=True, unique=True,
-                        nullable=False)
-    email = Column(TEXT, nullable=False, unique=True)
+                        nullable=False, index=True)
+    email = Column(TEXT, nullable=False, unique=True, index=True)
     verification_key = Column(TEXT, nullable=False, index=True, unique=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 

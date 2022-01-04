@@ -10,8 +10,8 @@ class CategoryCourseLink(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'category_course_link'
     __table_args__ = {'schema': 'content'}
 
-    category_id = Column(INT, ForeignKey('content.category.id'), primary_key=True)
-    course_id = Column(INT, ForeignKey('content.course.id'), primary_key=True)
+    category_id = Column(INT, ForeignKey('content.category.id'), primary_key=True, index=True)
+    course_id = Column(INT, ForeignKey('content.course.id'), primary_key=True, index=True)
 
     def save_to_db(self):
         services.db.session.add(self)

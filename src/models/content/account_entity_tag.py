@@ -12,9 +12,9 @@ class AccountEntityTag(services.db.Base, PostgresSerializerMixin):
     __tablename__ = 'account_entity_tags'
     __table_args__ = {'schema': 'content'}
 
-    account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), primary_key=True)
+    account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), primary_key=True, index=True)
     entity_id = Column(INT, nullable=False, index=True, primary_key=True)
-    entity_type = Column(ENUM(EntityType), nullable=False, primary_key=True)
+    entity_type = Column(ENUM(EntityType), nullable=False, primary_key=True, index=True)
     like = Column(BOOLEAN, default=False)
     dislike = Column(BOOLEAN, default=False)
     favorite = Column(BOOLEAN, default=False)
