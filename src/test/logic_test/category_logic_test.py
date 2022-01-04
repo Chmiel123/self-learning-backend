@@ -124,8 +124,16 @@ class CategoryLogicTest(BaseWithContextTest):
         })
 
     def test_create_language_id_in_parent_is_different(self):
-        Language('es', 'spanish', 'espanol').save_to_db()
-        AdminPrivilege(1, 5, 2).save_to_db()
+        language = Language()
+        language.code = 'es'
+        language.english_name = 'spanish'
+        language.native_name = 'espanol'
+        language.save_to_db()
+        admin_privilege = AdminPrivilege()
+        admin_privilege.account_id = 1
+        admin_privilege.language_id = 2
+        admin_privilege.strength = 5
+        admin_privilege.save_to_db()
         category_logic.create_or_update({
             'id': None,
             'name': 'a',

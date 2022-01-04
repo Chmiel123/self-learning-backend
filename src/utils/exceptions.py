@@ -31,6 +31,16 @@ class AdminPrivilegeRequiredException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Admin privilege required'
+class AdminPrivilegeStrengthInvalidException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Admin privilege strength must be between {} and {}'
+class AdminPrivilegeNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Admin privilege for account id {} and language id {}'
+
+# Value exceptions
 class UserNameAlreadyExistsException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)

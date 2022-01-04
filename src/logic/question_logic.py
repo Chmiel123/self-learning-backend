@@ -1,7 +1,6 @@
 from typing import Dict, List
 
 from src.logic import account_logic
-from src.models.account.account import Account
 from src.models.content.lesson import Lesson
 from src.models.content.question import Question
 from src.utils import modify

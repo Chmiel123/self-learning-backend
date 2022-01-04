@@ -12,8 +12,16 @@ class BaseWithContextTest(BaseTest):
         super().setUp()
         account_logic.create_account_with_password('john', 'john@example.com', 'pass')
         account_logic.create_account_with_password('bill', 'bill@example.com', 'pass')
-        Language('en', 'english', 'english').save_to_db()
-        AdminPrivilege(1, 5, 1).save_to_db()
+        language = Language()
+        language.code = 'en'
+        language.english_name = 'english'
+        language.native_name = 'english'
+        language.save_to_db()
+        admin_privilege = AdminPrivilege()
+        admin_privilege.account_id = 1
+        admin_privilege.language_id = 1
+        admin_privilege.strength = 5
+        admin_privilege.save_to_db()
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = 'secret'
         self.app.config['JWT_SECRET_KEY'] = 'secret'

@@ -2,14 +2,10 @@ from src.logic import account_logic
 from src.models import get_parent_entity
 from src.models.account.account import Account
 from src.models.content.account_entity_tag import AccountEntityTag
-from src.models.content.comment import Comment
-from src.models.content.course import Course
-from src.models.content.lesson import Lesson
 from src.models.system.entity_type import EntityType
 from src.utils import parse_id_range, modify
 from src.utils.exceptions import AccountEntityTagIdNotFoundException, AccountEntityTagLikeDislikeBothTrueException, \
-    AccountEntityTagInProgressCompletedBothTrueException, CourseIdNotFoundException, LessonIdNotFoundException, \
-    CommentIdNotFoundException, EntityTypeNotSupportedException
+    AccountEntityTagInProgressCompletedBothTrueException
 
 
 def get_account_entity_tags_for_entities(entity_id_range: str, entity_type_raw: int):

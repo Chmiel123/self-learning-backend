@@ -16,11 +16,6 @@ class Language(services.db.Base, PostgresSerializerMixin):
     english_name = Column(TEXT)
     native_name = Column(TEXT)
 
-    def __init__(self, code: str, english_name: str, native_name: str):
-        self.code = code
-        self.english_name = english_name
-        self.native_name = native_name
-
     def save_to_db(self):
         services.db.session.add(self)
         services.db.session.commit()

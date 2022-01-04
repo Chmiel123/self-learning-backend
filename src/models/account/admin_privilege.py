@@ -12,13 +12,8 @@ class AdminPrivilege(services.db.Base, PostgresSerializerMixin):
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
     account_id = Column(INT, ForeignKey('account.account.id', ondelete='CASCADE'), nullable=False)
-    strength = Column(INT, nullable=False)
     language_id = Column(SMALLINT, ForeignKey('system.language.id'), nullable=False)
-
-    def __init__(self, account_id: int, strength: int, language_id: int):
-        self.account_id = account_id
-        self.strength = strength
-        self.language_id = language_id
+    strength = Column(INT, nullable=False)
 
     def save_to_db(self):
         services.db.session.add(self)
@@ -36,6 +31,11 @@ class AdminPrivilege(services.db.Base, PostgresSerializerMixin):
     def find_by_account_id_and_language_id(account_id: int, language_id: int) -> 'AdminPrivilege':
         return services.db.session.query(AdminPrivilege)\
             .filter_by(account_id=account_id, language_id=language_id).first()
+
+    @staticmethod
+    def delete_by_account_id_and_language_id(account_id: int, language_id: int):
+        return services.db.session.query(AdminPrivilege)\
+            .filter_by(account_id=account_id, language_id=language_id).delete()
 
     @staticmethod
     def delete_by_id(id):
