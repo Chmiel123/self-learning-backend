@@ -22,7 +22,9 @@ for lg in list_of_courses:
     course.likes = lg[4]
     course.dislikes = lg[5]
     course.save_to_db()
-    category_course_link = CategoryCourseLink(lg[2], course.id)
+    category_course_link = CategoryCourseLink()
+    category_course_link.category_id = lg[2]
+    category_course_link.course_id = course.id
     category_course_link.save_to_db()
     if course.status == EntityStatus.active:
         category = Category.find_by_id(category_course_link.category_id)

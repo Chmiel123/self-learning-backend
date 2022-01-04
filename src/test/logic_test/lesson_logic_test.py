@@ -30,7 +30,10 @@ class LessonLogicTest(BaseWithContextTest):
         course1.language_id = 1
         course1.author_id = 1
         course1.save_to_db()
-        CategoryCourseLink(1, 1).save_to_db()
+        category_course_link = CategoryCourseLink()
+        category_course_link.category_id = 1
+        category_course_link.course_id = 1
+        category_course_link.save_to_db()
 
     def test_create_lesson(self):
         lesson_logic.create_or_update({

@@ -78,7 +78,10 @@ def _create(course_dict: dict, current_account: Account):
     course.status = EntityStatus.draft
     course.save_to_db()
     for category_id in course_dict['category_ids']:
-        CategoryCourseLink(category_id, course.id).save_to_db()
+        category_course_link = CategoryCourseLink()
+        category_course_link.category_id = category_id
+        category_course_link.course_id = course.id
+        category_course_link.save_to_db()
     change_history = ChangeHistory(current_account.id, course.id, EntityType.course, course.name,
                                    course.content, course.status)
     change_history.save_to_db()
@@ -109,15 +112,16 @@ def _update(course: Course, course_dict: dict, current_account: Account) -> Cour
             CategoryCourseLink.delete_by_category_id_course_id(existing_link.category_id, existing_link.course_id)
         else:
             existing_links_stay.append(existing_link)
-
     for category_id in course_dict['category_ids']:
         create_new_link = True
         for existing_link_stay in existing_links_stay:
             if existing_link_stay.category_id == category_id:
                 create_new_link = False
         if create_new_link:
-            CategoryCourseLink(category_id, course.id).save_to_db()
-
+            category_course_link = CategoryCourseLink()
+            category_course_link.category_id = category_id
+            category_course_link.course_id = course.id
+            category_course_link.save_to_db()
     if changed:
         course.save_to_db()
         change_history = ChangeHistory(current_account.id, course.id, EntityType.course, course.name,
