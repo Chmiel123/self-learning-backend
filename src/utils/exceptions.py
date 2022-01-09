@@ -133,6 +133,10 @@ class CommentIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Comment with id {} not found'
+class CommentMaxDepthReachedException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'You cannot reply to this comment'
 
 class EntityTypeNotSupportedException(ErrorException):
     def __init__(self, parameters: List[str] = []):

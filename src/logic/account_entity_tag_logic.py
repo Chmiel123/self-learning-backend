@@ -1,5 +1,5 @@
 from src.logic import account_logic
-from src.models import get_parent_entity
+from src.models import get_tag_parent_entity
 from src.models.account.account import Account
 from src.models.content.account_entity_tag import AccountEntityTag
 from src.models.system.entity_type import EntityType
@@ -47,7 +47,7 @@ def _create(account_entity_tag_dict: dict, current_account: Account) -> AccountE
     tag.account_id = current_account.id
     tag.entity_id = account_entity_tag_dict['entity_id']
     tag.entity_type = EntityType(account_entity_tag_dict['entity_type'])
-    parent_entity = get_parent_entity(tag.entity_id, tag.entity_type)
+    parent_entity = get_tag_parent_entity(tag.entity_id, tag.entity_type)
 
     if account_entity_tag_dict['like'] == 'true' and account_entity_tag_dict['dislike'] == 'true':
         raise AccountEntityTagLikeDislikeBothTrueException()
@@ -67,7 +67,7 @@ def _create(account_entity_tag_dict: dict, current_account: Account) -> AccountE
 
 
 def _update(tag: AccountEntityTag, account_entity_tag_dict: dict) -> AccountEntityTag:
-    parent_entity = get_parent_entity(tag.entity_id, tag.entity_type)
+    parent_entity = get_tag_parent_entity(tag.entity_id, tag.entity_type)
     changed = False
     if tag.like and not account_entity_tag_dict['like'] == 'true':
         _change_like(-1, parent_entity)

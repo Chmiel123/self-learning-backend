@@ -1,4 +1,6 @@
 import logging
+import logging.handlers
+import time
 
 import psycopg2.errors
 import sqlalchemy.exc
@@ -32,11 +34,22 @@ from src.resources.content.course_resource import CourseResource
 from src.resources.content.lesson_resource import LessonResource
 from src.resources.content.question_resource import QuestionResource
 from src.resources.content.account_entity_tag_resource import AccountEntityTagResource
+from src.resources.content.comment_resource import CommentResource
 
 flask = services.flask
 jwt = services.jwt
 api = services.api
 db = services.db
+
+if services.flask.config['FILE_LOGGING']:
+    log_handler = logging.handlers.TimedRotatingFileHandler(services.flask.config['FILE_LOGGING_FILENAME'],
+                                                            when='D', backupCount=10)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    formatter.converter = time.gmtime
+    log_handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.addHandler(log_handler)
+    logger.setLevel(logging.DEBUG)
 
 
 @jwt.expired_token_loader
@@ -84,19 +97,19 @@ def page_not_found(e):
         'default_message': 'Endpoint not found'
     }), 404
 
+
 # TODO: generic exception log to file, not to anyone in the internet
 @flask.errorhandler(Exception)
 def error_exception_handler(exception: Exception):
     if issubclass(type(exception), psycopg2.errors.Error)\
             or issubclass(type(exception), sqlalchemy.exc.SQLAlchemyError):
         services.db.session.rollback()
-    if services.flask.config['DEBUG']:
-        logging.exception(exception)
+    logging.exception(exception)
     return jsonify({
         'status': 'Error',
         'error_code': 'unknown_error',
         'parameters': [],
-        'default_message': str(exception)
+        'default_message': 'An error occurred'
     }), 500
 
 
@@ -122,3 +135,4 @@ api.add_resource(CourseResource, '/course')
 api.add_resource(LessonResource, '/lesson')
 api.add_resource(QuestionResource, '/question')
 api.add_resource(AccountEntityTagResource, '/tag')
+api.add_resource(CommentResource, '/comment')

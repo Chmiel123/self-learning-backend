@@ -6,20 +6,39 @@ from src.utils.exceptions import CourseIdNotFoundException, LessonIdNotFoundExce
     EntityTypeNotSupportedException
 
 
-def get_parent_entity(entity_id: int, entity_type: EntityType) -> object:
+def get_tag_parent_entity(entity_id: int, entity_type: EntityType) -> object:
     parent_entity = None
     if entity_type == EntityType.course:
         parent_entity = Course.find_by_id(entity_id)
         if not parent_entity:
-            raise CourseIdNotFoundException([entity_id])
+            raise CourseIdNotFoundException([str(entity_id)])
     elif entity_type == EntityType.lesson:
         parent_entity = Lesson.find_by_id(entity_id)
         if not parent_entity:
-            raise LessonIdNotFoundException([entity_id])
+            raise LessonIdNotFoundException([str(entity_id)])
     elif entity_type == EntityType.comment:
         parent_entity = Comment.find_by_id(entity_id)
         if not parent_entity:
-            raise CommentIdNotFoundException([entity_id])
+            raise CommentIdNotFoundException([str(entity_id)])
+    else:
+        raise EntityTypeNotSupportedException([entity_type.value])
+    return parent_entity
+
+
+def get_comment_parent_entity(entity_id: int, entity_type: EntityType) -> object:
+    parent_entity = None
+    if entity_type == EntityType.course:
+        parent_entity = Course.find_by_id(entity_id)
+        if not parent_entity:
+            raise CourseIdNotFoundException([str(entity_id)])
+    elif entity_type == EntityType.lesson:
+        parent_entity = Lesson.find_by_id(entity_id)
+        if not parent_entity:
+            raise LessonIdNotFoundException([str(entity_id)])
+    elif entity_type == EntityType.comment:
+        parent_entity = Comment.find_by_id(entity_id)
+        if not parent_entity:
+            raise CommentIdNotFoundException([str(entity_id)])
     else:
         raise EntityTypeNotSupportedException([entity_type.value])
     return parent_entity

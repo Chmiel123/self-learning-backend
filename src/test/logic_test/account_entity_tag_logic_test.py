@@ -47,9 +47,10 @@ class AccountEntityTagLogicTest(BaseWithContextTest):
         comment.author_id = 1
         comment.parent_id = 1
         comment.parent_type = EntityType.course
+        comment.language_id = 1
         comment.save_to_db()
 
-    def test_create_question(self):
+    def test_create_tag(self):
         account_entity_tag_logic.create_or_update({
             "entity_id": 1,
             "entity_type": 2,
@@ -102,7 +103,7 @@ class AccountEntityTagLogicTest(BaseWithContextTest):
         self.assertEqual(True, tag.in_progress)
         self.assertEqual(False, tag.completed)
 
-    def test_create_update_question(self):
+    def test_create_update_tag(self):
         account_entity_tag_logic.create_or_update({
             "entity_id": 1,
             "entity_type": 2,
