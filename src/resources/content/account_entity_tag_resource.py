@@ -9,10 +9,12 @@ account_entity_tag_get_parser.add_argument('entity_id_range', location='args', t
 account_entity_tag_get_parser.add_argument('entity_type', location='args', type=int, required=True)
 
 account_entity_tag_post_parser = reqparse.RequestParser()
-account_entity_tag_post_parser.add_argument('account_entity_tag', type=dict, help='This field cannot be blank', required=True)
+account_entity_tag_post_parser.add_argument('account_entity_tag', type=dict, help='This field cannot be blank',
+                                            required=True)
 
 account_entity_tag_delete_parser = reqparse.RequestParser()
-account_entity_tag_delete_parser.add_argument('account_entity_tag', type=dict, help='This field cannot be blank', required=True)
+account_entity_tag_delete_parser.add_argument('account_entity_tag', type=dict, help='This field cannot be blank',
+                                              required=True)
 
 
 class AccountEntityTagResource(Resource):

@@ -98,7 +98,6 @@ def page_not_found(e):
     }), 404
 
 
-# TODO: generic exception log to file, not to anyone in the internet
 @flask.errorhandler(Exception)
 def error_exception_handler(exception: Exception):
     if issubclass(type(exception), psycopg2.errors.Error)\
