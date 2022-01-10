@@ -2,6 +2,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from src.logic import question_logic
+from src.utils import assert_type_nullable, assert_type
 from src.utils.response import ok
 
 question_get_parser = reqparse.RequestParser()
@@ -81,6 +82,14 @@ class QuestionResource(Resource):
         data = question_post_parser.parse_args()
         result = None
         if data['question']:
+            assert_type_nullable(data['question']['id'], int)
+            assert_type(data['question']['lesson_id'], int)
+            assert_type(data['question']['order_begin'], int)
+            assert_type(data['question']['order_end'], int)
+            assert_type(data['question']['question'], str)
+            assert_type(data['question']['available_answers'], list)
+            assert_type(data['question']['correct_answers'], list)
+            assert_type(data['question']['solution'], str)
             result = question_logic.create_or_update(data['question'])
         return ok(result)
 

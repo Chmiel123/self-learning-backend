@@ -49,14 +49,16 @@ def _create(account_entity_tag_dict: dict, current_account: Account) -> AccountE
     tag.entity_type = EntityType(account_entity_tag_dict['entity_type'])
     parent_entity = get_tag_parent_entity(tag.entity_id, tag.entity_type)
 
-    if account_entity_tag_dict['like'] == 'true' and account_entity_tag_dict['dislike'] == 'true':
-        raise AccountEntityTagLikeDislikeBothTrueException()
-    tag.like = account_entity_tag_dict['like'] == 'true'
-    if tag.like:
-        _change_like(+1, parent_entity)
-    tag.dislike = account_entity_tag_dict['dislike'] == 'true'
-    if tag.dislike:
-        _change_dislike(+1, parent_entity)
+    if hasattr(parent_entity, 'likes') and hasattr(parent_entity, 'dislikes'):
+        if account_entity_tag_dict['like'] == 'true' and account_entity_tag_dict['dislike'] == 'true':
+            raise AccountEntityTagLikeDislikeBothTrueException()
+        tag.like = account_entity_tag_dict['like'] == 'true'
+        if tag.like:
+            _change_like(+1, parent_entity)
+        tag.dislike = account_entity_tag_dict['dislike'] == 'true'
+        if tag.dislike:
+            _change_dislike(+1, parent_entity)
+
     tag.favorite = account_entity_tag_dict['favorite'] == 'true'
     if account_entity_tag_dict['in_progress'] == 'true' and account_entity_tag_dict['completed'] == 'true':
         raise AccountEntityTagInProgressCompletedBothTrueException()
@@ -69,16 +71,17 @@ def _create(account_entity_tag_dict: dict, current_account: Account) -> AccountE
 def _update(tag: AccountEntityTag, account_entity_tag_dict: dict) -> AccountEntityTag:
     parent_entity = get_tag_parent_entity(tag.entity_id, tag.entity_type)
     changed = False
-    if tag.like and not account_entity_tag_dict['like'] == 'true':
-        _change_like(-1, parent_entity)
-    elif not tag.like and account_entity_tag_dict['like'] == 'true':
-        _change_like(+1, parent_entity)
-    changed = modify(tag, account_entity_tag_dict['like'] == 'true', 'like', changed)
-    if tag.dislike and not account_entity_tag_dict['dislike'] == 'true':
-        _change_dislike(-1, parent_entity)
-    elif not tag.dislike and account_entity_tag_dict['dislike'] == 'true':
-        _change_dislike(+1, parent_entity)
-    changed = modify(tag, account_entity_tag_dict['dislike'] == 'true', 'dislike', changed)
+    if hasattr(parent_entity, 'likes') and hasattr(parent_entity, 'dislikes'):
+        if tag.like and not account_entity_tag_dict['like'] == 'true':
+            _change_like(-1, parent_entity)
+        elif not tag.like and account_entity_tag_dict['like'] == 'true':
+            _change_like(+1, parent_entity)
+        changed = modify(tag, account_entity_tag_dict['like'] == 'true', 'like', changed)
+        if tag.dislike and not account_entity_tag_dict['dislike'] == 'true':
+            _change_dislike(-1, parent_entity)
+        elif not tag.dislike and account_entity_tag_dict['dislike'] == 'true':
+            _change_dislike(+1, parent_entity)
+        changed = modify(tag, account_entity_tag_dict['dislike'] == 'true', 'dislike', changed)
     changed = modify(tag, account_entity_tag_dict['favorite'] == 'true', 'favorite', changed)
     changed = modify(tag, account_entity_tag_dict['in_progress'] == 'true', 'in_progress', changed)
     changed = modify(tag, account_entity_tag_dict['completed'] == 'true', 'completed', changed)

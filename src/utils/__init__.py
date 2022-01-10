@@ -1,4 +1,6 @@
-from src.utils.exceptions import IdRangeInvalidException
+from typing import Type
+
+from src.utils.exceptions import IdRangeInvalidException, InvalidInputDataException
 
 
 def modify(entity, value, field, changed):
@@ -14,3 +16,13 @@ def parse_id_range(id_range: str):
         return int(split[0]), int(split[1])
     except (ValueError, IndexError):
         raise IdRangeInvalidException([id_range])
+
+
+def assert_type(value, ttype: Type):
+    if not isinstance(value, ttype):
+        raise InvalidInputDataException([str(value), ttype.__name__])
+
+
+def assert_type_nullable(value, ttype: Type):
+    if value is not None and not isinstance(value, ttype):
+        raise InvalidInputDataException([str(value), ttype.__name__])

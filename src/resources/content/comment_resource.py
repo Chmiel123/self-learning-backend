@@ -1,8 +1,11 @@
+from typing import Optional
+
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from src.logic import comment_logic
 from src.services import services
+from src.utils import assert_type, assert_type_nullable
 from src.utils.response import ok
 
 comment_get_parser = reqparse.RequestParser()
@@ -96,6 +99,10 @@ class CommentResource(Resource):
         data = comment_post_parser.parse_args()
         result = None
         if data['comment']:
+            assert_type_nullable(data['comment']['id'], int)
+            assert_type_nullable(data['comment']['parent_id'], int)
+            assert_type_nullable(data['comment']['parent_type'], int)
+            assert_type(data['comment']['content'], str)
             result = comment_logic.create_or_update(data['comment'])
         return ok(result)
 

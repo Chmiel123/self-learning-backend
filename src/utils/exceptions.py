@@ -143,6 +143,11 @@ class EntityTypeNotSupportedException(ErrorException):
         super().__init__(parameters)
         self.default_message = 'Entity type {} not supported for this operation'
 
+class InvalidInputDataException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Input data {} invalid. Must be of type {}'
+
 # utils errors
 class IdRangeInvalidException(ErrorException):
     def __init__(self, parameters: List[str] = []):

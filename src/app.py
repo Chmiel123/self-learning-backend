@@ -88,6 +88,16 @@ def error_exception_handler(error: WarningException):
     }), 200
 
 
+@flask.errorhandler(ValueError)
+def error_exception_handler(error: ValueError):
+    return jsonify({
+        'status': 'Warning',
+        'warning_code': error.__class__.__name__,
+        'parameters': [],
+        'default_message': 'Invalid input data'
+    }), 200
+
+
 @flask.errorhandler(404)
 def page_not_found(e):
     return jsonify({

@@ -2,6 +2,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from src.logic import account_entity_tag_logic
+from src.utils import assert_type
 from src.utils.response import ok
 
 account_entity_tag_get_parser = reqparse.RequestParser()
@@ -88,6 +89,13 @@ class AccountEntityTagResource(Resource):
         data = account_entity_tag_post_parser.parse_args()
         result = None
         if data['account_entity_tag']:
+            assert_type(data['account_entity_tag']['entity_id'], int)
+            assert_type(data['account_entity_tag']['entity_type'], int)
+            assert_type(data['account_entity_tag']['like'], bool)
+            assert_type(data['account_entity_tag']['dislike'], bool)
+            assert_type(data['account_entity_tag']['favorite'], bool)
+            assert_type(data['account_entity_tag']['in_progress'], bool)
+            assert_type(data['account_entity_tag']['completed'], bool)
             result = account_entity_tag_logic.create_or_update(data['account_entity_tag'])
         return ok(result)
 
@@ -118,5 +126,8 @@ class AccountEntityTagResource(Resource):
             description: OK.
         """
         data = account_entity_tag_delete_parser.parse_args()
-        result = account_entity_tag_logic.delete(data['account_entity_tag'])
+        if data['account_entity_tag']:
+            assert_type(data['account_entity_tag']['entity_id'], int)
+            assert_type(data['account_entity_tag']['entity_type'], int)
+            result = account_entity_tag_logic.delete(data['account_entity_tag'])
         return ok(result)

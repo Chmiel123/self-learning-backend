@@ -6,7 +6,6 @@ from sqlalchemy import Column, ForeignKey, DateTime, INT
 from sqlalchemy.dialects.postgresql import TEXT
 
 from src.services import services
-from src.services.services import db
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
 
 
@@ -27,25 +26,25 @@ class EmailVerification(services.db.Base, PostgresSerializerMixin):
             random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
 
     def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
+        services.db.session.add(self)
+        services.db.session.commit()
 
     @staticmethod
     def find_by_account_id(account_id) -> 'EmailVerification':
-        return db.session.query(EmailVerification).filter_by(account_id=account_id).first()
+        return services.db.session.query(EmailVerification).filter_by(account_id=account_id).first()
 
     @staticmethod
     def find_by_verification_key(verification_key: str) -> 'EmailVerification':
-        return db.session.query(EmailVerification).filter_by(verification_key=verification_key).first()
+        return services.db.session.query(EmailVerification).filter_by(verification_key=verification_key).first()
 
     @staticmethod
     def find_by_email(email) -> 'EmailVerification':
-        return db.session.query(EmailVerification).filter_by(email=email).first()
+        return services.db.session.query(EmailVerification).filter_by(email=email).first()
 
     @staticmethod
     def delete_by_account_id(account_id):
-        return db.session.query(EmailVerification).filter_by(account_id=account_id).delete()
+        return services.db.session.query(EmailVerification).filter_by(account_id=account_id).delete()
 
     @staticmethod
     def delete_by_email(email):
-        return db.session.query(EmailVerification).filter_by(email=email).delete()
+        return services.db.session.query(EmailVerification).filter_by(email=email).delete()

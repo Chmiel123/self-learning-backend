@@ -2,6 +2,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from src.logic import admin_privilege_logic
+from src.utils import assert_type
 from src.utils.response import ok
 
 admin_privilege_get_parser = reqparse.RequestParser()
@@ -66,6 +67,9 @@ class AdminPrivilegeResource(Resource):
         data = admin_privilege_post_parser.parse_args()
         result = None
         if data['admin_privilege']:
+            assert_type(data['admin_privilege']['account_id'], int)
+            assert_type(data['admin_privilege']['language_id'], int)
+            assert_type(data['admin_privilege']['strength'], int)
             result = admin_privilege_logic.create_or_update(data['admin_privilege'])
         return ok(result)
 

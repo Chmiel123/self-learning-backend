@@ -10,7 +10,8 @@ from src.models.system.entity_type import EntityType
 from src.test.base_with_context_test import BaseWithContextTest
 from src.utils.exceptions import AccountEntityTagIdNotFoundException, CourseIdNotFoundException, \
     LessonIdNotFoundException, CommentIdNotFoundException, EntityTypeNotSupportedException, \
-    AccountEntityTagLikeDislikeBothTrueException, AccountEntityTagInProgressCompletedBothTrueException
+    AccountEntityTagLikeDislikeBothTrueException, AccountEntityTagInProgressCompletedBothTrueException, \
+    CategoryIdNotFoundException
 
 
 class AccountEntityTagLogicTest(BaseWithContextTest):
@@ -309,10 +310,20 @@ class AccountEntityTagLogicTest(BaseWithContextTest):
                                 "in_progress": "true",
                                 "completed": "false"
                             })
-        self.assertRaises(EntityTypeNotSupportedException,
+        self.assertRaises(CategoryIdNotFoundException,
                           account_entity_tag_logic.create_or_update, {
                                 "entity_id": 2,
                                 "entity_type": 1,
+                                "like": "true",
+                                "dislike": "false",
+                                "favorite": "true",
+                                "in_progress": "true",
+                                "completed": "false"
+                            })
+        self.assertRaises(EntityTypeNotSupportedException,
+                          account_entity_tag_logic.create_or_update, {
+                                "entity_id": 2,
+                                "entity_type": 5,
                                 "like": "true",
                                 "dislike": "false",
                                 "favorite": "true",

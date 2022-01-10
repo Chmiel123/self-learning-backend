@@ -2,6 +2,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, reqparse
 
 from src.logic import category_logic
+from src.utils import assert_type_nullable, assert_type
 from src.utils.response import ok
 
 category_get_parser = reqparse.RequestParser()
@@ -79,6 +80,13 @@ class CategoryResource(Resource):
         data = category_post_parser.parse_args()
         result = None
         if data['category']:
+            assert_type_nullable(data['category']['id'], int)
+            assert_type_nullable(data['category']['parent_id'], int)
+            assert_type(data['category']['name'], str)
+            assert_type(data['category']['content'], str)
+            assert_type(data['category']['status'], int)
+            assert_type(data['category']['language_id'], int)
+            assert_type(data['category']['can_add_courses'], bool)
             result = category_logic.create_or_update(data['category'])
         return ok(result)
 

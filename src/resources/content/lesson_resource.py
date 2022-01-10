@@ -2,6 +2,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from src.logic import lesson_logic
+from src.utils import assert_type_nullable, assert_type
 from src.utils.response import ok
 
 lesson_get_parser = reqparse.RequestParser()
@@ -91,6 +92,14 @@ class LessonResource(Resource):
         data = lesson_post_parser.parse_args()
         result = None
         if data['lesson']:
+            assert_type_nullable(data['lesson']['id'], int)
+            assert_type(data['lesson']['course_id'], int)
+            assert_type(data['lesson']['type'], int)
+            assert_type(data['lesson']['order'], int)
+            assert_type(data['lesson']['name'], str)
+            assert_type(data['lesson']['content'], str)
+            assert_type(data['lesson']['status'], int)
+            assert_type(data['lesson']['language_id'], int)
             result = lesson_logic.create_or_update(data['lesson'])
         return ok(result)
 

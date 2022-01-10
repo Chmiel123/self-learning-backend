@@ -1,8 +1,11 @@
+from typing import List
+
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from src.logic import course_logic
 from src.services import services
+from src.utils import assert_type_nullable, assert_type
 from src.utils.response import ok
 
 course_get_parser = reqparse.RequestParser()
@@ -101,6 +104,12 @@ class CourseResource(Resource):
         data = course_post_parser.parse_args()
         result = None
         if data['course']:
+            assert_type_nullable(data['course']['id'], int)
+            assert_type(data['course']['category_ids'], list)
+            assert_type(data['course']['name'], str)
+            assert_type(data['course']['content'], str)
+            assert_type(data['course']['status'], int)
+            assert_type(data['course']['language_id'], int)
             result = course_logic.create_or_update(data['course'])
         return ok(result)
 
