@@ -1,5 +1,5 @@
 from src.logic import comment_logic
-from src.models import Course, Comment, EntityType
+from src.models import Course, Comment, EntityType, Lesson
 from src.models.content.category import Category
 from src.models.content.category_course_link import CategoryCourseLink
 from src.models.system.entity_status import EntityStatus
@@ -30,6 +30,13 @@ class CommentLogicTest(BaseWithContextTest):
         category_course_link.category_id = 1
         category_course_link.course_id = 1
         category_course_link.save_to_db()
+        lesson = Lesson()
+        lesson.name = 'c'
+        lesson.content = 'c is a lesson'
+        lesson.language_id = 1
+        lesson.author_id = 1
+        lesson.course_id = course1.id
+        lesson.save_to_db()
 
     def test_create_comment(self):
         comment_logic.create_or_update({
@@ -71,7 +78,7 @@ class CommentLogicTest(BaseWithContextTest):
         comment_logic.create_or_update({
             "id": None,
             "parent_id": 1,
-            "parent_type": 2,
+            "parent_type": 3,
             "content": "This is a comment"
         })
         comment_logic.create_or_update({
@@ -85,7 +92,7 @@ class CommentLogicTest(BaseWithContextTest):
         comment = Comment.find_by_id(1)
         self.assertEqual(1, comment.id)
         self.assertEqual(1, comment.parent_id)
-        self.assertEqual(EntityType.course, comment.parent_type)
+        self.assertEqual(EntityType.lesson, comment.parent_type)
         self.assertEqual("This is an edited comment", comment.content)
         self.assertEqual(EntityStatus.active, comment.status)
         self.assertEqual(0, comment.likes)
