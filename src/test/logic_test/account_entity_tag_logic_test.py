@@ -243,6 +243,36 @@ class AccountEntityTagLogicTest(BaseWithContextTest):
         self.assertEqual(True, tag.favorite)
         self.assertEqual(True, tag.in_progress)
         self.assertEqual(False, tag.completed)
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 1,
+            "like": "true",
+            "dislike": "false",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        tag = AccountEntityTag.find_by_account_id_and_entity_id(1, 1, EntityType.category)
+        self.assertEqual(1, tag.entity_id)
+        self.assertEqual(EntityType.category, tag.entity_type)
+        self.assertEqual(True, tag.favorite)
+        self.assertEqual(True, tag.in_progress)
+        self.assertEqual(False, tag.completed)
+        account_entity_tag_logic.create_or_update({
+            "entity_id": 1,
+            "entity_type": 1,
+            "like": "true",
+            "dislike": "false",
+            "favorite": "true",
+            "in_progress": "true",
+            "completed": "false"
+        })
+        tag = AccountEntityTag.find_by_account_id_and_entity_id(1, 1, EntityType.category)
+        self.assertEqual(1, tag.entity_id)
+        self.assertEqual(EntityType.category, tag.entity_type)
+        self.assertEqual(True, tag.favorite)
+        self.assertEqual(True, tag.in_progress)
+        self.assertEqual(False, tag.completed)
 
     def test_get_account_entity_tags_for_entities(self):
         account_entity_tag_logic.create_or_update({
