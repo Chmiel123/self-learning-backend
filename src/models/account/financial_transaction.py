@@ -12,8 +12,7 @@ class FinancialTransaction(services.db.Base, PostgresSerializerMixin):
     __table_args__ = {'schema': 'account'}
 
     id = Column(INT, primary_key=True, unique=True, nullable=False)
-    account_id = Column(INT, ForeignKey('account.account.id'), primary_key=True, nullable=False,
-                        index=True)
+    account_id = Column(INT, ForeignKey('account.account.id'), nullable=False, index=True)
     amount = Column(DECIMAL, nullable=False)
     date = Column(DateTime, default=datetime.datetime.utcnow)
 
