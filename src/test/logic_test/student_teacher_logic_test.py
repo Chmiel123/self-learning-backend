@@ -9,7 +9,7 @@ from src.utils.exceptions import NotAuthorizedException, StudentTeacherLinkAlrea
 
 class StudentTeacherLogicTest(BaseWithContextTest):
     def test_make_request(self):
-        student_teacher_logic.make_request(1, 2, True, False)
+        student_teacher_logic.make_request(1, 2)
         request = StudentTeacherRequest.find_by_teacher_id_and_student_id(1, 2)
         self.assertIsNotNone(request)
         self.assertEqual(1, request.teacher_id)
@@ -18,7 +18,7 @@ class StudentTeacherLogicTest(BaseWithContextTest):
         self.assertEqual(False, request.student_accepted)
 
         self.login_as_user()
-        student_teacher_logic.make_request(1, 2, False, True)
+        student_teacher_logic.make_request(1, 2)
         request = StudentTeacherRequest.find_by_teacher_id_and_student_id(1, 2)
         self.assertIsNone(request)
         link = StudentTeacherLink.find_by_teacher_id_and_student_id(1, 2)
@@ -27,50 +27,48 @@ class StudentTeacherLogicTest(BaseWithContextTest):
         self.assertEqual(2, link.student_id)
 
         self.assertRaises(StudentTeacherLinkAlreadyExistException,
-                          student_teacher_logic.make_request, 1, 2, False, True)
+                          student_teacher_logic.make_request, 1, 2)
 
     def test_remove_request_and_link(self):
-        student_teacher_logic.make_request(1, 2, True, False)
+        student_teacher_logic.make_request(1, 2)
         self.login_as_user()
-        student_teacher_logic.make_request(1, 2, False, True)
+        student_teacher_logic.make_request(1, 2)
         link = StudentTeacherLink.find_by_teacher_id_and_student_id(1, 2)
         self.assertIsNotNone(link)
         student_teacher_logic.remove_request_and_link(1, 2)
         link = StudentTeacherLink.find_by_teacher_id_and_student_id(1, 2)
         self.assertIsNone(link)
 
-        # student_teacher_logic.make_request(1, 2, False, True)
-        # request = StudentTeacherRequest.find_by_teacher_id_and_student_id(1, 2)
-        # self.assertIsNotNone(request)
-        # self.login_as_admin()
-        # student_teacher_logic.remove_request_and_link(1, 2)
-        # request = StudentTeacherRequest.find_by_teacher_id_and_student_id(1, 2)
-        # self.assertIsNone(request)
-
     def test_are_linked(self):
         are_linked = student_teacher_logic.are_linked(1, 2)
         self.assertEqual(False, are_linked)
 
-        student_teacher_logic.make_request(1, 2, True, False)
+        student_teacher_logic.make_request(1, 2)
         self.login_as_user()
-        student_teacher_logic.make_request(1, 2, False, True)
+        student_teacher_logic.make_request(1, 2)
 
         are_linked = student_teacher_logic.are_linked(1, 2)
         self.assertEqual(True, are_linked)
 
-    def test_make_request_not_authorized(self):
-        self.assertRaises(NotAuthorizedException, student_teacher_logic.make_request, 1, 2, False, True)
-        self.assertRaises(NotAuthorizedException, student_teacher_logic.make_request, 2, 1, True, False)
-
     def test_remove_request_and_link_not_authorized(self):
         account_logic.create_account_with_password('jill', 'jill@example.com', 'pass')
-        student_teacher_logic.make_request(1, 2, True, False)
+        student_teacher_logic.make_request(1, 2)
         self.login_as_user()
-        student_teacher_logic.make_request(1, 2, False, True)
+        student_teacher_logic.make_request(1, 2)
         self.login_as(Account.find_by_id(3))
         self.assertRaises(NotAuthorizedException, student_teacher_logic.remove_request_and_link, 1, 2)
 
     def test_student_teacher_same_exception(self):
-        self.assertRaises(StudentTeacherTheSameException, student_teacher_logic.make_request, 1, 1, False, True)
+        self.assertRaises(StudentTeacherTheSameException, student_teacher_logic.make_request, 1, 1)
         self.assertRaises(StudentTeacherTheSameException, student_teacher_logic.remove_request_and_link, 1, 1)
         self.assertRaises(StudentTeacherTheSameException, student_teacher_logic.are_linked, 1, 1)
+
+    def test_get_details(self):
+        student_teacher_logic.make_request(1, 2)
+        student_teacher_logic.make_request(2, 1)
+        self.login_as_user()
+        student_teacher_logic.make_request(1, 2)
+        student_teacher_logic.make_request(2, 1)
+        result = student_teacher_logic.get_details()
+        self.assertEqual(1, result['teachers'][0])
+        self.assertEqual(1, result['students'][0])
