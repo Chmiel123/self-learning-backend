@@ -137,6 +137,10 @@ class CommentMaxDepthReachedException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'You cannot reply to this comment'
+class StudentTeacherTheSameException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Student and teacher are the same account'
 
 class EntityTypeNotSupportedException(ErrorException):
     def __init__(self, parameters: List[str] = []):
@@ -159,4 +163,7 @@ class EmailIsTheSameException(WarningException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'User has already verified email {}'
-
+class StudentTeacherLinkAlreadyExistException(WarningException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Student teacher link already exist'

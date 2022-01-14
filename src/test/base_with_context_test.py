@@ -2,6 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request
 
 from src.logic import account_logic
+from src.models.account.account import Account
 from src.models.account.admin_privilege import AdminPrivilege
 from src.models.system.language import Language
 from src.test.base_test import BaseTest
@@ -45,6 +46,16 @@ class BaseWithContextTest(BaseTest):
         self.c = self.app.test_request_context()
         self.c.push()
         access_token = create_access_token(identity="bill", expires_delta=False, fresh=True)
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token)
+        }
+        self.c.request.headers = headers
+        verify_jwt_in_request()
+
+    def login_as(self, account: Account):
+        self.c = self.app.test_request_context()
+        self.c.push()
+        access_token = create_access_token(identity=account.name, expires_delta=False, fresh=True)
         headers = {
             'Authorization': 'Bearer {}'.format(access_token)
         }
