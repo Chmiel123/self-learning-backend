@@ -61,6 +61,10 @@ def _create(question_dict: dict):
     question.solution = question_dict['solution']
     question.lesson_id = question_dict['lesson_id']
     question.save_to_db()
+    lesson = Lesson.find_by_id(question.lesson_id)
+    if not lesson_logic.validate_test(lesson):
+        lesson.is_valid_test = False
+        lesson.save_to_db()
     return question
 
 
@@ -75,4 +79,8 @@ def _update(question: Question, question_dict: dict) -> Question:
     changed = modify(question, question_dict['lesson_id'], 'lesson_id', changed)
     if changed:
         question.save_to_db()
+        lesson = Lesson.find_by_id(question.lesson_id)
+        if not lesson_logic.validate_test(lesson):
+            lesson.is_valid_test = False
+            lesson.save_to_db()
     return question

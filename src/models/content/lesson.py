@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column, INT, DateTime, ForeignKey, SMALLINT
+from sqlalchemy import Column, INT, DateTime, ForeignKey, SMALLINT, BOOLEAN
 from sqlalchemy.dialects.postgresql import TEXT, ENUM
 
 from src.models.system.entity_status import EntityStatus
@@ -25,6 +25,7 @@ class Lesson(services.db.Base, PostgresSerializerMixin):
     status = Column(ENUM(EntityStatus), nullable=False, default=EntityStatus.draft)
     likes = Column(INT, default=0)
     dislikes = Column(INT, default=0)
+    is_valid_test = Column(BOOLEAN, default=True)
     language_id = Column(SMALLINT, ForeignKey('system.language.id'), nullable=False)
     created_date = Column(DateTime, default=datetime.utcnow)
 

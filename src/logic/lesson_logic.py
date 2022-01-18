@@ -75,9 +75,18 @@ def delete(id: int):
         raise LessonIdNotFoundException([str(id)])
 
 
-def validate_test(lesson: Lesson):
+def validate_test(lesson: Lesson) -> bool:
     questions = Question.find_by_lesson_id(lesson.id)
-    # TODO: sort and check orders, mark as draft invalid
+    questions.sort(key=lambda q: q.order_begin)
+    order_begin = 0
+    order_end = 0
+    for question in questions:
+        if question.order_begin >= order_end and question.order_end >= order_end:
+            order_begin = question.order_begin
+            order_end = question.order_end
+        elif question.order_end != order_end or question.order_begin != order_begin:
+            return False
+    return True
 
 
 def _create(lesson_dict: dict, current_account: Account):
@@ -105,6 +114,8 @@ def _update(lesson: Lesson, lesson_dict: dict, current_account: Account) -> Less
     changed = modify(lesson, LessonType(lesson_dict['type']), 'type', changed)
     changed = modify(lesson, int(lesson_dict['order']), 'order', changed)
     if changed:
+        if not validate_test(lesson):
+            lesson.is_valid_test = False
         lesson.save_to_db()
         change_history = ChangeHistory(current_account.id, lesson.id, EntityType.lesson, lesson.name,
                                        lesson.content, lesson.status)

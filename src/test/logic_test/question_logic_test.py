@@ -213,3 +213,39 @@ class QuestionLogicTest(BaseWithContextTest):
                                 "correct_answers": ['C'],
                                 "solution": "Explanation goes here."
                             })
+
+    def test_invalid_questions(self):
+        lesson = Lesson.find_by_id(1)
+        self.assertEqual(True, lesson.is_valid_test)
+        question_logic.create_or_update({
+            "id": None,
+            "lesson_id": 1,
+            "order_begin": 1,
+            "order_end": 2,
+            "question": "Question 1",
+            "available_answers": ['A', 'B', 'C', 'D'],
+            "correct_answers": ['C'],
+            "solution": "Explanation goes here."
+        })
+        question_logic.create_or_update({
+            "id": None,
+            "lesson_id": 1,
+            "order_begin": 1,
+            "order_end": 3,
+            "question": "Question 2",
+            "available_answers": ['A', 'B', 'C', 'D'],
+            "correct_answers": ['B'],
+            "solution": "Explanation goes here."
+        })
+        question_logic.create_or_update({
+            "id": 2,
+            "lesson_id": 1,
+            "order_begin": 1,
+            "order_end": 3,
+            "question": "Question 2",
+            "available_answers": ['A', 'B', 'C', 'D'],
+            "correct_answers": ['B'],
+            "solution": "Explanation goes here!"
+        })
+        lesson = Lesson.find_by_id(1)
+        self.assertEqual(False, lesson.is_valid_test)

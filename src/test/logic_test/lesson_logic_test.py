@@ -4,6 +4,7 @@ from src.models.content.category import Category
 from src.models.content.category_course_link import CategoryCourseLink
 from src.models.content.course import Course
 from src.models.content.lesson import Lesson
+from src.models.content.question import Question
 from src.models.system.entity_status import EntityStatus
 from src.models.system.language import Language
 from src.models.system.lesson_type import LessonType
@@ -248,3 +249,40 @@ class LessonLogicTest(BaseWithContextTest):
                               "order": 2,
                               "type": LessonType.lesson.value
                           })
+
+    invalid_questions = [
+        ['Question 01', "['A','B','C','D']", "[3]", 1, 2, "Solution"],
+        ['Question 02', "['A','B','C','D']", "[3]", 1, 2, "Solution"],
+        ['Question 03', "['A','B','C','D']", "[3]", 1, 3, "Solution"]
+    ]
+
+    def test_invalid_lesson_test(self):
+        lesson = Lesson()
+        lesson.name = 'c'
+        lesson.content = 'c is a lesson'
+        lesson.language_id = 1
+        lesson.author_id = 1
+        lesson.course_id = 1
+        lesson.type = LessonType.test
+        lesson.save_to_db()
+        for q in LessonLogicTest.invalid_questions:
+            question = Question()
+            question.lesson_id = lesson.id
+            question.question = q[0]
+            question.available_answers = q[1]
+            question.correct_answers = q[2]
+            question.order_begin = q[3]
+            question.order_end = q[4]
+            question.solution = q[5]
+            question.save_to_db()
+        lesson_logic.create_or_update({
+            "id": 1,
+            "name": "c",
+            "content": "c is a lesson",
+            "status": 1,
+            "order": 1,
+            "language_id": 1,
+            "type": LessonType.lesson.value
+        })
+        lesson = Lesson.find_by_id(1)
+        self.assertEqual(False, lesson.is_valid_test)
