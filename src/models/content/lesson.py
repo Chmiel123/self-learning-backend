@@ -16,8 +16,9 @@ class Lesson(services.db.Base, PostgresSerializerMixin):
 
     id = Column(INT, primary_key=True, unique=True, nullable=False, index=True)
     course_id = Column(INT, ForeignKey('content.course.id'), nullable=False, index=True)
-    author_id = Column(INT, nullable=True, index=True)
+    author_id = Column(INT, nullable=False, index=True)
     type = Column(ENUM(LessonType), nullable=False, default=LessonType.lesson)
+    duration_minutes = Column(SMALLINT, nullable=True)
     order = Column(SMALLINT)
     name = Column(TEXT, nullable=False)
     content = Column(TEXT, nullable=False)

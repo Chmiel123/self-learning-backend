@@ -6,6 +6,7 @@ from src.models.account.admin_privilege import AdminPrivilege
 from src.models.content.change_history import ChangeHistory
 from src.models.content.course import Course
 from src.models.content.lesson import Lesson
+from src.models.content.question import Question
 from src.models.system.entity_status import EntityStatus
 from src.models.system.entity_type import EntityType
 from src.models.system.lesson_type import LessonType
@@ -72,6 +73,11 @@ def delete(id: int):
         return lesson.to_dict()
     else:
         raise LessonIdNotFoundException([str(id)])
+
+
+def validate_test(lesson: Lesson):
+    questions = Question.find_by_lesson_id(lesson.id)
+    # TODO: sort and check orders, mark as draft invalid
 
 
 def _create(lesson_dict: dict, current_account: Account):

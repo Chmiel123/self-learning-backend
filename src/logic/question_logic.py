@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from src.logic import account_logic
+from src.logic import account_logic, lesson_logic
 from src.models.content.lesson import Lesson
 from src.models.content.question import Question
 from src.utils import modify
@@ -25,10 +25,12 @@ def create_or_update(question_dict: dict) -> Question:
             question = Question.find_by_id(question_dict['id'])
             if question:
                 question = _update(question, question_dict)
+                lesson_logic.validate_test(lesson)
                 return question.to_dict()
             else:
                 raise QuestionIdNotFoundException([question_dict['id']])
         question = _create(question_dict)
+        lesson_logic.validate_test(lesson)
         return question.to_dict()
     else:
         raise NotAuthorizedException()

@@ -113,6 +113,10 @@ class LessonLanguageIdInvalidException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Invalid language id: {}'
+class TestNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Test with id {} not found'
 class QuestionIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)

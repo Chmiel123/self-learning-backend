@@ -10,7 +10,7 @@ parser.add_argument('teacher_id', type=int, help='This field cannot be blank', r
 parser.add_argument('student_id', type=int, help='This field cannot be blank', required=True)
 
 
-class StudentTeacherLink(Resource):
+class StudentTeacherResource(Resource):
     @jwt_required()
     def get(self):
         """Get teachers and students of the current account

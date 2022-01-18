@@ -1,12 +1,15 @@
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column, INT, DateTime, ForeignKey, SMALLINT
+from sqlalchemy import Column, INT, DateTime, ForeignKey, SMALLINT, FLOAT
 from sqlalchemy.dialects.postgresql import TEXT, ENUM
 
 from src.models.system.entity_status import EntityStatus
 from src.services import services
 from src.utils.postgres_serializer_mixing import PostgresSerializerMixin
+
+
+rules_to_student = ('-correct_answers', '-solution')
 
 
 class Question(services.db.Base, PostgresSerializerMixin):
@@ -21,6 +24,7 @@ class Question(services.db.Base, PostgresSerializerMixin):
     available_answers = Column(TEXT, nullable=True)
     correct_answers = Column(TEXT, nullable=False)
     solution = Column(TEXT, nullable=True)
+    points_max = Column(FLOAT, default=0.0)
 
     def save_to_db(self):
         services.db.session.add(self)
