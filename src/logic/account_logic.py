@@ -134,6 +134,17 @@ def check_if_admin_privilege(current_account: Account, language_id: int):
     return current_account
 
 
+def try_get_current_account():
+    try:
+        current_user = get_jwt_identity()
+    except RuntimeError:
+        return None
+    current_account = Account.find_by_username(current_user)
+    if not current_account:
+        raise UserNameNotFoundException([current_user])
+    return current_account
+
+
 def get_current_account():
     current_user = get_jwt_identity()
     current_account = Account.find_by_username(current_user)

@@ -57,6 +57,7 @@ class TestLogicTest(BaseWithContextTest):
         lesson.author_id = 1
         lesson.course_id = course1.id
         lesson.type = LessonType.test
+        lesson.duration_minutes = 60
         lesson.save_to_db()
         for q in questions:
             question = Question()
@@ -70,6 +71,11 @@ class TestLogicTest(BaseWithContextTest):
             question.save_to_db()
 
     def test_generate_test(self):
+        self.c = self.app.test_request_context()
+        self.c.push()
+        headers = {
+        }
+        self.c.request.headers = headers
         test = test_logic.generate_test(1)
         self.assertEqual("['A','B','C','D']", test['questions'][0]['available_answers'])
         self.assertEqual("['A','B','C','D']", test['questions'][1]['available_answers'])
@@ -80,12 +86,19 @@ class TestLogicTest(BaseWithContextTest):
 
     def test_generate_test_save_to_db_if_premium(self):
         test_logic.generate_test(1)
-        tests = Test.find_by_test_id_and_solver_id(1, 1)
+        tests = Test.find_by_lesson_id_and_account_id(1, 1)
         self.assertEqual(0, len(tests))
         premium_logic.add_premium(1)
         test_logic.generate_test(1)
-        test = Test.find_by_test_id_and_solver_id(1, 1)[0]
+        test = Test.find_by_lesson_id_and_account_id(1, 1)[0]
         self.assertEqual(TestStatus.in_progress, test.status)
+
+    def test_get_test(self):
+        premium_logic.add_premium(1)
+        test_logic.generate_test(1)
+        result = test_logic.get_tests(1)
+        self.assertEqual(1, result['tests'][0]['lesson_id'])
+        self.assertEqual(1, result['tests'][0]['account_id'])
 
     def test_test_not_found(self):
         self.assertRaises(TestNotFoundException, test_logic.generate_test, 2)
