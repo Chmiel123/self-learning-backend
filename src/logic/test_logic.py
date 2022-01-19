@@ -8,13 +8,15 @@ from src.models.content.answer import Answer
 from src.models.content.question import Question, rules_to_student
 from src.models.content.test import Test
 from src.models.system.lesson_type import LessonType
-from src.utils.exceptions import TestNotFoundException
+from src.utils.exceptions import TestNotFoundException, TestNotValidException
 
 
 def generate_test(lesson_id: int):
     lesson = Lesson.find_by_id(lesson_id)
     if not lesson or lesson.type != LessonType.test:
         raise TestNotFoundException([str(lesson_id)])
+    if not lesson.is_valid_test:
+        raise TestNotValidException([str(lesson_id)])
     questions = Question.find_by_lesson_id(lesson_id)
     questions.sort(key=lambda q: q.order_begin)
     selected_questions: List[Question] = []

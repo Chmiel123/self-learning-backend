@@ -1,4 +1,4 @@
-from src.logic import test_logic, premium_logic
+from src.logic import test_logic, premium_logic, lesson_logic
 from src.models import Category, Course, Lesson
 from src.models.content.category_course_link import CategoryCourseLink
 from src.models.content.question import Question
@@ -7,7 +7,7 @@ from src.models.system.entity_status import EntityStatus
 from src.models.system.lesson_type import LessonType
 from src.models.system.test_status import TestStatus
 from src.test.base_with_context_test import BaseWithContextTest
-from src.utils.exceptions import TestNotFoundException
+from src.utils.exceptions import TestNotFoundException, TestNotValidException
 
 questions = [
     ['Question 01', "['A','B','C','D']", "[3]", 1, 2, "Solution"],
@@ -18,6 +18,13 @@ questions = [
     ['Question 06', "['A','B','C','D']", "[3]", 1, 2, "Solution"],
     ['Question 07', "['1','2','3','4']", "[1]", 3, 3, "Solution"],
     ['Question 08', "['1','2','3','4']", "[2]", 4, 4, "Solution"]
+]
+
+
+invalid_questions = [
+    ['Question 01', "['A','B','C','D']", "[3]", 1, 2, "Solution"],
+    ['Question 02', "['A','B','C','D']", "[3]", 1, 2, "Solution"],
+    ['Question 03', "['A','B','C','D']", "[3]", 1, 3, "Solution"]
 ]
 
 
@@ -82,3 +89,25 @@ class TestLogicTest(BaseWithContextTest):
 
     def test_test_not_found(self):
         self.assertRaises(TestNotFoundException, test_logic.generate_test, 2)
+
+    def test_invalid_test(self):
+        lesson = Lesson()
+        lesson.name = 'd'
+        lesson.content = 'd is a lesson'
+        lesson.language_id = 1
+        lesson.author_id = 1
+        lesson.course_id = 1
+        lesson.type = LessonType.test
+        lesson.is_valid_test = False
+        lesson.save_to_db()
+        for q in invalid_questions:
+            question = Question()
+            question.lesson_id = lesson.id
+            question.question = q[0]
+            question.available_answers = q[1]
+            question.correct_answers = q[2]
+            question.order_begin = q[3]
+            question.order_end = q[4]
+            question.solution = q[5]
+            question.save_to_db()
+        self.assertRaises(TestNotValidException, test_logic.generate_test, 2)
