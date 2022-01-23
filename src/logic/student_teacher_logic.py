@@ -17,7 +17,7 @@ def get_details():
 
 def are_linked(teacher_id: int, student_id: int):
     if teacher_id == student_id:
-        raise StudentTeacherTheSameException()
+        return False
     existing_link = StudentTeacherLink.find_by_teacher_id_and_student_id(teacher_id, student_id)
     if existing_link:
         return True

@@ -2,15 +2,14 @@ import random
 from datetime import datetime, timedelta
 from typing import List
 
-from flask_jwt_extended import get_jwt_identity
-
-from src.logic import account_logic, premium_logic
+from src.logic import account_logic, premium_logic, student_teacher_logic
 from src.models import Lesson
 from src.models.account.account import Account
 from src.models.content.answer import Answer
 from src.models.content.question import Question, rules_to_student
 from src.models.content.test import Test
 from src.models.system.lesson_type import LessonType
+from src.models.system.test_status import TestStatus
 from src.utils.exceptions import TestNotFoundException, TestNotValidException
 
 
@@ -20,6 +19,22 @@ def get_tests(lesson_id: int):
     return {
         'tests': [x.to_dict() for x in tests]
     }
+
+
+def update(test_dict: dict) -> Test:
+    test = Test.find_by_id(test_dict['id'])
+    if not test:
+        raise TestNotFoundException([test_dict['id']])
+    account = account_logic.get_current_account()
+    if account.id == test.account_id and test.status == TestStatus.in_progress\
+            and TestStatus(test_dict['status']) == TestStatus.finished:
+        test.status = TestStatus.finished
+        test.save_to_db()
+    if student_teacher_logic.are_linked(account.id, test.account_id)\
+            and (test.status == TestStatus.finished or test.end_datetime > datetime.utcnow())\
+            and TestStatus(test_dict['status']) == TestStatus.marked:
+        test.status = TestStatus.marked
+        test.save_to_db()
 
 
 def generate_test(lesson_id: int):
@@ -60,7 +75,7 @@ def _save_test(account: Account, lesson: Lesson, selected_questions: List[Questi
     test.lesson_id = lesson.id
     test.account_id = account.id
     test.start_datetime = datetime.utcnow()
-    test.start_datetime = test.start_datetime + timedelta(minutes=lesson.duration_minutes)
+    test.end_datetime = test.start_datetime + timedelta(minutes=lesson.duration_minutes)
     test.save_to_db()
     for i in range(len(selected_questions)):
         answer = Answer()

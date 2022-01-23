@@ -1,4 +1,4 @@
-from src.logic import test_logic, premium_logic, lesson_logic
+from src.logic import test_logic, premium_logic, lesson_logic, student_teacher_logic
 from src.models import Category, Course, Lesson
 from src.models.content.category_course_link import CategoryCourseLink
 from src.models.content.question import Question
@@ -124,3 +124,43 @@ class TestLogicTest(BaseWithContextTest):
             question.solution = q[5]
             question.save_to_db()
         self.assertRaises(TestNotValidException, test_logic.generate_test, 2)
+
+    def test_update(self):
+        premium_logic.add_premium(1)
+        test_logic.generate_test(1)
+        test = Test.find_by_lesson_id_and_account_id(1, 1)[0]
+        self.assertEqual(TestStatus.in_progress, test.status)
+        test_logic.update({
+            'id': 1,
+            'status': 2
+        })
+        test = Test.find_by_lesson_id_and_account_id(1, 1)[0]
+        self.assertEqual(TestStatus.finished, test.status)
+        student_teacher_logic.make_request(2, 1)
+        self.login_as_user()
+        student_teacher_logic.make_request(2, 1)
+        test_logic.update({
+            'id': 1,
+            'status': 3
+        })
+        test = Test.find_by_lesson_id_and_account_id(1, 1)[0]
+        self.assertEqual(TestStatus.marked, test.status)
+
+    def test_update_exceptions(self):
+        self.assertRaises(TestNotFoundException, test_logic.update, {
+            'id': 2,
+            'status': 2
+        })
+        premium_logic.add_premium(1)
+        test_logic.generate_test(1)
+        test_logic.update({
+            'id': 1,
+            'status': 3
+        })
+        student_teacher_logic.make_request(2, 1)
+        self.login_as_user()
+        student_teacher_logic.make_request(2, 1)
+        test_logic.update({
+            'id': 1,
+            'status': 1
+        })

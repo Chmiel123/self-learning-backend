@@ -2,6 +2,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from src.logic import test_logic
+from src.utils import assert_type
 from src.utils.response import ok
 
 test_get_parser = reqparse.RequestParser()
@@ -30,6 +31,10 @@ class GenerateTestResource(Resource):
         return ok(result)
 
 
+test_post_parser = reqparse.RequestParser()
+test_post_parser.add_argument('test', type=dict, help='This field cannot be blank', required=True)
+
+
 class TestResource(Resource):
     @jwt_required()
     def get(self):
@@ -50,4 +55,38 @@ class TestResource(Resource):
         result = {}
         if data['lesson_id']:
             result = test_logic.get_tests(data['lesson_id'])
+        return ok(result)
+
+    @jwt_required()
+    def post(self):
+        """Update a test.
+        ---
+        tags:
+          - Content
+        parameters:
+          - name: body
+            in: body
+            required: true
+            schema:
+              properties:
+                test:
+                  type: object
+                  properties:
+                      id:
+                        type: int
+                        example: null
+                      status:
+                        type: string
+                        enum: [1, 2, 3]
+                        example: 2
+        responses:
+          200:
+            description: OK.
+        """
+        data = test_post_parser.parse_args()
+        result = None
+        if data['test']:
+            assert_type(data['test']['id'], int)
+            assert_type(data['test']['status'], int)
+            result = test_logic.update(data['question'])
         return ok(result)
