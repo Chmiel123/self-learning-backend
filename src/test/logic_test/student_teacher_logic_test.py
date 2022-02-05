@@ -61,7 +61,6 @@ class StudentTeacherLogicTest(BaseWithContextTest):
     def test_student_teacher_same_exception(self):
         self.assertRaises(StudentTeacherTheSameException, student_teacher_logic.make_request, 1, 1)
         self.assertRaises(StudentTeacherTheSameException, student_teacher_logic.remove_request_and_link, 1, 1)
-        self.assertRaises(StudentTeacherTheSameException, student_teacher_logic.are_linked, 1, 1)
 
     def test_get_details(self):
         student_teacher_logic.make_request(1, 2)

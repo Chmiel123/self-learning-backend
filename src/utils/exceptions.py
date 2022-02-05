@@ -121,6 +121,14 @@ class TestNotValidException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Test with id {} is not valid'
+class TestFinishedException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Test was finished on {}'
+class TestNotFinishedException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Test is finished on {}'
 class QuestionIdNotFoundException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
@@ -149,6 +157,10 @@ class StudentTeacherTheSameException(ErrorException):
     def __init__(self, parameters: List[str] = []):
         super().__init__(parameters)
         self.default_message = 'Student and teacher are the same account'
+class AnswerIdNotFoundException(ErrorException):
+    def __init__(self, parameters: List[str] = []):
+        super().__init__(parameters)
+        self.default_message = 'Answer with id {} not found'
 
 class EntityTypeNotSupportedException(ErrorException):
     def __init__(self, parameters: List[str] = []):

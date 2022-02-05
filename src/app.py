@@ -36,7 +36,8 @@ from src.resources.content.question_resource import QuestionResource
 from src.resources.content.account_entity_tag_resource import AccountEntityTagResource
 from src.resources.content.comment_resource import CommentResource
 from src.resources.account.student_teacher_resource import StudentTeacherResource
-from src.resources.content.test_resource import TestResource
+from src.resources.content.test_resource import GenerateTestResource, TestResource
+from src.resources.content.answer_resource import AnswerResource
 
 flask = services.flask
 jwt = services.jwt
@@ -148,4 +149,6 @@ api.add_resource(QuestionResource, '/question')
 api.add_resource(AccountEntityTagResource, '/tag')
 api.add_resource(CommentResource, '/comment')
 api.add_resource(StudentTeacherResource, '/student-teacher')
+api.add_resource(GenerateTestResource, '/generate-test')
 api.add_resource(TestResource, '/test')
+api.add_resource(AnswerResource, '/answer')
